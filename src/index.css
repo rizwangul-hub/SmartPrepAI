@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: hsl(200, 80%, 50%);
+  --color-secondary: hsl(210, 30%, 20%);
+  --color-accent: hsl(160, 60%, 45%);
+}
+
+/* ── Global Select & Option Styling ──────────────────────────────────────────
+   Browser-native <option> elements cannot be styled via Tailwind parent classes.
+   These global rules ensure dropdowns match the dark theme across ALL pages.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+select {
+  color: #e2e8f0; /* slate-200 */
+  background-color: #0f172a; /* slate-950 */
+}
+
+select option {
+  background-color: #1e293b; /* slate-800 */
+  color: #e2e8f0;            /* slate-200 */
+  padding: 8px 12px;
+}
+
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  background-color: #4f46e5; /* indigo-600 */
+  color: #ffffff;
+}
+
+/* Disabled option style */
+select option:disabled {
+  color: #64748b; /* slate-500 */
+  background-color: #0f172a;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155; /* slate-700 */
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5; /* indigo-600 */
+}
