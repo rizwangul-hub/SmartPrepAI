@@ -278,14 +278,14 @@ export default function Dashboard() {
       className={`min-h-screen bg-gradient-to-br ${theme.bgGradient} dark:${theme.bgGradient} text-gray-900 dark:text-gray-100 flex flex-col font-sans transition-colors duration-500`}
     >
       {/* Premium Navbar */}
-      <nav className="sticky top-0 z-40 bg-white/10 dark:bg-slate-900/10 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">{theme.badgeIcon}</span>
-          <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            SmartPrepAI
+      <nav className="sticky top-0 z-40 bg-white/10 dark:bg-slate-900/10 backdrop-blur-xl border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <span className="text-xl sm:text-2xl">{theme.badgeIcon}</span>
+          <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
+            SmartPrep<span className="hidden xs:inline">AI</span>
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <div className="hidden sm:flex flex-col text-right">
             <span className="text-sm font-bold text-gray-100">
               {user?.name || "Student"}
@@ -298,17 +298,17 @@ export default function Dashboard() {
             <img
               src={user.profileImage}
               alt="avatar"
-              className="w-10 h-10 rounded-xl object-cover border border-white/20"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover border border-white/20"
             />
           ) : (
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white shadow text-xs sm:text-sm">
               {user?.name?.charAt(0)?.toUpperCase()}
             </div>
           )}
           <ThemeToggle />
           <button
             onClick={() => navigate("/profile")}
-            className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition"
+            className="p-1.5 sm:p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition text-sm sm:text-base"
             title="Settings"
           >
             👤
@@ -316,9 +316,9 @@ export default function Dashboard() {
           {user?.role === "admin" && (
             <button
               onClick={() => navigate("/admin")}
-              className="px-4 py-2 text-xs font-bold rounded-xl bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30 transition"
+              className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold rounded-xl bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/30 transition whitespace-nowrap"
             >
-              Admin Suite
+              <span className="hidden sm:inline">Admin Suite</span><span className="sm:hidden">Admin</span>
             </button>
           )}
           <button
@@ -326,7 +326,7 @@ export default function Dashboard() {
               logout();
               navigate("/login");
             }}
-            className="p-2 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition"
+            className="p-1.5 sm:p-2 rounded-xl text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition text-sm sm:text-base"
             title="Log Out"
           >
             ✕
