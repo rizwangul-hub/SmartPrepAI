@@ -1,7 +1,9 @@
 // src/pages/LandingPage.jsx
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import axios from "axios";
 
 const EXAMS = [
   { icon: "🎖️", name: "PMA Long Course", category: "Military" },
@@ -57,6 +59,26 @@ const FEATURES = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
+  const [questionCount, setQuestionCount] = useState(null);
+
+  useEffect(() => {
+    axios.get("/api/public-stats")
+      .then((res) => {
+        if (res.data && typeof res.data.questionCount === "number") {
+          setQuestionCount(res.data.questionCount);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch public stats:", err);
+      });
+  }, []);
+
+  const getQuestionStatString = () => {
+    if (questionCount === null) return "500+"; // fallback while loading
+    if (questionCount < 500) return "500+";
+    const rounded = Math.floor(questionCount / 500) * 500;
+    return `${rounded}+`;
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans">
@@ -139,7 +161,7 @@ export default function LandingPage() {
           <div className="flex justify-center gap-10 pt-10">
             {[
               { num: "15+", label: "Supported Exams" },
-              { num: "500+", label: "Practice Questions" },
+              { num: getQuestionStatString(), label: "Practice Questions" },
               { num: "AI", label: "Powered Engine" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
