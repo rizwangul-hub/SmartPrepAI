@@ -83,35 +83,35 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-white font-sans">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">⚡</span>
-          <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-            SmartPrep AI
+      <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 sm:gap-3">
+          <span className="text-xl sm:text-2xl">⚡</span>
+          <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap">
+            SmartPrep<span className="hidden xs:inline"> AI</span>
           </span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggle />
           {isAuthenticated ? (
             <button
               onClick={() => navigate("/dashboard")}
-              className="px-5 py-2 text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 transition"
+              className="px-3.5 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 transition whitespace-nowrap"
             >
-              Go to Dashboard →
+              <span className="hidden sm:inline">Go to </span>Dashboard →
             </button>
           ) : (
             <>
               <button
                 onClick={() => navigate("/login")}
-                className="px-5 py-2 text-sm font-semibold text-slate-300 hover:text-white transition"
+                className="px-2.5 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-semibold text-slate-300 hover:text-white transition whitespace-nowrap"
               >
                 Sign In
               </button>
               <button
                 onClick={() => navigate("/register")}
-                className="px-5 py-2 text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 transition"
+                className="px-3 py-1.5 sm:px-5 sm:py-2 text-xs sm:text-sm font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 transition whitespace-nowrap"
               >
-                Get Started Free
+                <span className="hidden sm:inline">Get Started Free</span><span className="sm:hidden">Get Started</span>
               </button>
             </>
           )}
