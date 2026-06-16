@@ -309,39 +309,39 @@ export default function MockTest() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 flex flex-col font-sans">
-      <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-800/50 px-6 py-4 flex items-center justify-between shadow-sm">
-        <div className="flex-1">
-          <h2 className="text-lg font-extrabold line-clamp-1">
+      <header className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-800/50 px-4 py-3 sm:px-6 sm:py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+        <div className="flex-1 w-full">
+          <h2 className="text-base sm:text-lg font-extrabold line-clamp-1">
             {session.title}
           </h2>
-          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
+          <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
             {session.description || "Practice Test Session"}
           </p>
-          <div className="flex gap-3 mt-2 flex-wrap">
-            <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+          <div className="flex gap-2 mt-1.5 flex-wrap">
+            <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
               {answeredCount} / {totalQuestions} Answered
             </span>
             {currentQuestion.subject && (
-              <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">
+              <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">
                 {currentQuestion.subject}
               </span>
             )}
-            <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300">
+            <span className="px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-300">
               {session.duration} Minutes
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto border-t sm:border-t-0 pt-2.5 sm:pt-0 border-gray-200/50 dark:border-slate-800/50">
           <button
             onClick={handleSaveProgress}
             disabled={savingProgress}
-            className="px-4 py-2 text-xs font-bold rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition"
+            className="px-3.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition"
           >
             {savingProgress ? "Saving..." : "💾 Save & Pause"}
           </button>
           <div
-            className={`px-4 py-2 rounded-xl flex items-center gap-2 border font-mono font-bold text-sm ${timeLeft < 60 ? "bg-red-50 dark:bg-red-950/20 text-red-600 border-red-200 dark:border-red-900 animate-pulse" : "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 border-gray-200 dark:border-slate-700"}`}
+            className={`px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl flex items-center gap-1.5 sm:gap-2 border font-mono font-bold text-xs sm:text-sm ${timeLeft < 60 ? "bg-red-50 dark:bg-red-950/20 text-red-600 border-red-200 dark:border-red-900 animate-pulse" : "bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-slate-200 border-gray-200 dark:border-slate-700"}`}
           >
             <span>⏱️</span>
             <span>{formatTime(timeLeft)}</span>
@@ -349,9 +349,9 @@ export default function MockTest() {
         </div>
       </header>
 
-      <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row p-6 md:p-8 gap-8">
+      <div className="flex-1 max-w-7xl mx-auto w-full flex flex-col md:flex-row p-4 sm:p-6 md:p-8 gap-6 md:gap-8">
         <div className="flex-1 space-y-6">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-200/50 dark:border-slate-800/50 p-6 md:p-8 shadow-sm space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-200/50 dark:border-slate-800/50 p-4 sm:p-6 md:p-8 shadow-sm space-y-6">
             <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
               <span className="font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
                 Question {currentIdx + 1} of {totalQuestions}
@@ -428,7 +428,7 @@ export default function MockTest() {
         </div>
 
         <div className="w-full md:w-80">
-          <div className="bg-white dark:bg-slate-900 rounded-3xl border p-6 shadow-sm space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border p-4 sm:p-6 shadow-sm space-y-6">
             <h4 className="text-base font-bold">Question Matrix</h4>
             <div className="grid grid-cols-5 gap-2.5">
               {session.questions.map((q, idx) => {

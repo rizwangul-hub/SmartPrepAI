@@ -747,17 +747,17 @@ export default function Dashboard() {
       )}
 
       {/* AI Tutor Chat Assistant Floating Drawer Widget */}
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50">
         {!chatOpen ? (
           <button
             onClick={() => setChatOpen(true)}
-            className="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-full flex items-center justify-center text-2xl shadow-2xl hover:scale-110 active:scale-95 transition-all animate-bounce"
+            className="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-full flex items-center justify-center text-2xl shadow-2xl ml-auto hover:scale-110 active:scale-95 transition-all animate-bounce"
             title="Ask AI Exam Assistant"
           >
             💬
           </button>
         ) : (
-          <div className="w-80 sm:w-96 h-[480px] bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden">
+          <div className="w-full sm:w-96 h-[400px] sm:h-[480px] bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl flex flex-col justify-between overflow-hidden">
             {/* Chat Header */}
             <div className="px-4 py-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-2">

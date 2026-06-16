@@ -2335,26 +2335,26 @@ export default function AdminDashboard() {
       )}
 
       {/* ── Top Navbar ── */}
-      <nav className="sticky top-0 z-40 bg-slate-900/70 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">⚡</span>
-          <span className="text-xl font-extrabold bg-gradient-to-r from-purple-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent">
-            SmartPrepAI Admin
+      <nav className="sticky top-0 z-40 bg-slate-900/70 backdrop-blur-xl border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <span className="text-xl sm:text-2xl">⚡</span>
+          <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-purple-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
+            SmartPrep<span className="hidden xs:inline">AI</span> <span className="hidden sm:inline">Admin</span>
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
           <button
             onClick={() => navigate("/admin/bulk-upload")}
-            className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition"
+            className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition whitespace-nowrap"
           >
-            Bulk MCQ Upload
+            Bulk <span className="hidden md:inline">MCQ </span>Upload
           </button>
           <button
             onClick={() => navigate("/dashboard")}
-            className="px-4 py-2 text-xs font-bold rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition"
+            className="px-2.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-bold rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition whitespace-nowrap"
           >
-            ← Exit to Dashboard
+            <span className="hidden sm:inline">← Exit to </span><span className="sm:hidden">← </span>Dashboard
           </button>
         </div>
       </nav>
