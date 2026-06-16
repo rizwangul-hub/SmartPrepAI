@@ -5,6 +5,10 @@ import App from './App.jsx';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import axios from 'axios';
+
+// Set global Axios Base URL (development uses Vite proxy if unset)
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
 
 const queryClient = new QueryClient();
 

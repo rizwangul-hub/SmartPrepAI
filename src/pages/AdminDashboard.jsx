@@ -132,6 +132,11 @@ export default function AdminDashboard() {
   const [bankFilterSubject, setBankFilterSubject] = useState("");
   const [bankFilterExam, setBankFilterExam] = useState("");
   const [bankFilterDifficulty, setBankFilterDifficulty] = useState("");
+  // Pagination state — question bank
+  const [bankPage, setBankPage] = useState(1);
+  const [bankTotalPages, setBankTotalPages] = useState(1);
+  const [bankTotalCount, setBankTotalCount] = useState(0);
+  const BANK_PAGE_SIZE = 20;
   const [bankQuestionForm, setBankQuestionForm] = useState({
     exam: "",
     subject: "",
@@ -153,6 +158,11 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(true);
   const [userSearch, setUserSearch] = useState("");
+  // Pagination state — users
+  const [usersPage, setUsersPage] = useState(1);
+  const [usersTotalPages, setUsersTotalPages] = useState(1);
+  const [usersTotalCount, setUsersTotalCount] = useState(0);
+  const USERS_PAGE_SIZE = 25;
 
   // ── AI Config State ──
   const [aiSettings, setAiSettings] = useState({
@@ -180,15 +190,31 @@ export default function AdminDashboard() {
   const [parsedQuestions, setParsedQuestions] = useState([]);
   const fileInputRef = useRef(null);
 
+  // Caching Refs
+  const statsLoadedRef = useRef(false);
+  const examsLoadedRef = useRef(false);
+  const usersLoadedRef = useRef(false);
+  const lastUsersPageRef = useRef(null);
+  const lastUsersSearchRef = useRef(null);
+  const aiSettingsLoadedRef = useRef(false);
+  const questionBankLoadedRef = useRef(false);
+  const lastBankPageRef = useRef(null);
+  const lastBankSearchRef = useRef(null);
+  const lastBankSubjectRef = useRef(null);
+  const lastBankExamRef = useRef(null);
+  const lastBankDifficultyRef = useRef(null);
+
   // ═══════════════════════════════════════════════════════════════════════════
   // DATA FETCHERS
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const fetchStats = async () => {
+  const fetchStats = async (force = false) => {
+    if (statsLoadedRef.current && !force) return;
     setStatsLoading(true);
     try {
       const res = await axios.get("/api/admin/stats");
       setStats(res.data);
+      statsLoadedRef.current = true;
     } catch (err) {
       console.error("Stats fetch error:", err);
     } finally {
@@ -196,11 +222,13 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchExams = async () => {
+  const fetchExams = async (force = false) => {
+    if (examsLoadedRef.current && !force) return;
     setExamsLoading(true);
     try {
       const res = await axios.get("/api/exams");
       setExams(res.data);
+      examsLoadedRef.current = true;
     } catch (err) {
       console.error("Exams fetch error:", err);
     } finally {
@@ -208,11 +236,31 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page = usersPage, search = userSearch, force = false) => {
+    if (
+      usersLoadedRef.current &&
+      lastUsersPageRef.current === page &&
+      lastUsersSearchRef.current === search &&
+      !force
+    ) {
+      return;
+    }
     setUsersLoading(true);
     try {
-      const res = await axios.get("/api/admin/users");
-      setUsers(res.data);
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(USERS_PAGE_SIZE),
+      });
+      if (search.trim()) params.set('search', search.trim());
+      const res = await axios.get(`/api/admin/users?${params.toString()}`);
+      setUsers(res.data.users ?? res.data);
+      setUsersTotalPages(res.data.totalPages ?? 1);
+      setUsersTotalCount(res.data.totalCount ?? res.data.users?.length ?? 0);
+      setUsersPage(page);
+
+      usersLoadedRef.current = true;
+      lastUsersPageRef.current = page;
+      lastUsersSearchRef.current = search;
     } catch (err) {
       console.error("Users fetch error:", err);
     } finally {
@@ -220,7 +268,8 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchAiSettings = async () => {
+  const fetchAiSettings = async (force = false) => {
+    if (aiSettingsLoadedRef.current && !force) return;
     setAiLoading(true);
     try {
       const res = await axios.get("/api/admin/settings");
@@ -228,6 +277,7 @@ export default function AdminDashboard() {
         aiProvider: res.data.aiProvider || "openrouter",
         openrouterKey: res.data.openrouterKey || res.data.openaiKey || "",
       });
+      aiSettingsLoadedRef.current = true;
     } catch (err) {
       console.error("AI settings fetch error:", err);
     } finally {
@@ -245,10 +295,19 @@ export default function AdminDashboard() {
       activeTab === "question-bank"
     )
       fetchExams();
-    if (activeTab === "users" || activeTab === "notifications") fetchUsers();
+    if (activeTab === "users" || activeTab === "notifications") fetchUsers(1, userSearch);
     if (activeTab === "ai-config") fetchAiSettings();
-    if (activeTab === "question-bank") fetchQuestionBank();
+    if (activeTab === "question-bank") fetchQuestionBank(1);
   }, [activeTab]);
+
+  // Debounced server-side user search — fires 400ms after typing stops
+  useEffect(() => {
+    if (activeTab !== "users" && activeTab !== "notifications") return;
+    const timer = setTimeout(() => {
+      fetchUsers(1, userSearch, true);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [userSearch]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EXAM HANDLERS
@@ -261,7 +320,8 @@ export default function AdminDashboard() {
       showToast("Exam created successfully!", "success");
       setExamForm({ title: "", description: "", duration: 15 });
       setExamView("list");
-      fetchExams();
+      fetchExams(true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to create exam",
@@ -277,7 +337,8 @@ export default function AdminDashboard() {
       showToast("Exam updated successfully!", "success");
       setExamView("list");
       setActiveExam(null);
-      fetchExams();
+      fetchExams(true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to update exam",
@@ -290,7 +351,8 @@ export default function AdminDashboard() {
     try {
       await axios.delete(`/api/exams/${examId}`);
       showToast("Exam deleted successfully!", "success");
-      fetchExams();
+      fetchExams(true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to delete exam",
@@ -345,7 +407,8 @@ export default function AdminDashboard() {
       });
       const updated = await axios.get(`/api/exams/${activeExam._id}`);
       setActiveExam(updated.data);
-      fetchExams();
+      fetchExams(true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to add question",
@@ -394,7 +457,8 @@ export default function AdminDashboard() {
       showToast("Question deleted!", "success");
       const updated = await axios.get(`/api/exams/${activeExam._id}`);
       setActiveExam(updated.data);
-      fetchExams();
+      fetchExams(true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to delete question",
@@ -416,16 +480,42 @@ export default function AdminDashboard() {
     });
   };
 
-  const fetchQuestionBank = async () => {
+  const fetchQuestionBank = async (page = bankPage, force = false) => {
+    if (
+      questionBankLoadedRef.current &&
+      lastBankPageRef.current === page &&
+      lastBankSearchRef.current === questionBankSearch &&
+      lastBankSubjectRef.current === bankFilterSubject &&
+      lastBankExamRef.current === bankFilterExam &&
+      lastBankDifficultyRef.current === bankFilterDifficulty &&
+      !force
+    ) {
+      return;
+    }
     setQuestionBankLoading(true);
     try {
-      const params = new URLSearchParams({ limit: "500" });
+      const params = new URLSearchParams({
+        limit: String(BANK_PAGE_SIZE),
+        page: String(page),
+      });
       if (bankFilterSubject) params.set("subject", bankFilterSubject);
       if (bankFilterExam) params.set("examName", bankFilterExam);
       if (bankFilterDifficulty) params.set("difficulty", bankFilterDifficulty);
       if (questionBankSearch) params.set("keyword", questionBankSearch);
       const res = await axios.get(`/api/questions?${params.toString()}`);
-      setQuestionBank(res.data);
+      // Support both old (array) and new (paginated object) response shapes
+      const data = Array.isArray(res.data) ? res.data : res.data.questions ?? [];
+      setQuestionBank(data);
+      setBankTotalPages(res.data.totalPages ?? 1);
+      setBankTotalCount(res.data.totalCount ?? data.length);
+      setBankPage(page);
+
+      questionBankLoadedRef.current = true;
+      lastBankPageRef.current = page;
+      lastBankSearchRef.current = questionBankSearch;
+      lastBankSubjectRef.current = bankFilterSubject;
+      lastBankExamRef.current = bankFilterExam;
+      lastBankDifficultyRef.current = bankFilterDifficulty;
     } catch (err) {
       console.error("Question bank fetch error:", err);
       showToast(
@@ -501,7 +591,8 @@ export default function AdminDashboard() {
       await axios.post("/api/questions", payload);
       showToast("Question bank item created!", "success");
       clearBankQuestionForm();
-      fetchQuestionBank();
+      fetchQuestionBank(bankPage, true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to create question",
@@ -537,7 +628,8 @@ export default function AdminDashboard() {
       await axios.put(`/api/questions/${editingBankQuestion._id}`, payload);
       showToast("Question bank item updated!", "success");
       clearBankQuestionForm();
-      fetchQuestionBank();
+      fetchQuestionBank(bankPage, true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to update question",
@@ -550,7 +642,8 @@ export default function AdminDashboard() {
     try {
       await axios.delete(`/api/questions/${questionId}`);
       showToast("Question bank item deleted!", "success");
-      fetchQuestionBank();
+      fetchQuestionBank(bankPage, true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to delete question",
@@ -569,7 +662,8 @@ export default function AdminDashboard() {
     try {
       await axios.put(`/api/admin/users/${userId}/role`, { role: newRole });
       showToast(`Role changed to ${newRole}`, "success");
-      fetchUsers();
+      fetchUsers(usersPage, userSearch, true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to update role",
@@ -585,7 +679,8 @@ export default function AdminDashboard() {
         status: newStatus,
       });
       showToast(`User ${newStatus}`, "success");
-      fetchUsers();
+      fetchUsers(usersPage, userSearch, true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to update status",
@@ -598,7 +693,8 @@ export default function AdminDashboard() {
     try {
       await axios.delete(`/api/admin/users/${userId}`);
       showToast("User deleted", "success");
-      fetchUsers();
+      fetchUsers(usersPage, userSearch, true);
+      statsLoadedRef.current = false;
     } catch (err) {
       showToast(
         err.response?.data?.message || "Failed to delete user",
@@ -608,14 +704,8 @@ export default function AdminDashboard() {
     setConfirmDelete(null);
   };
 
-  const filteredUsers = users.filter((u) => {
-    const q = userSearch.toLowerCase();
-    return (
-      u.name?.toLowerCase().includes(q) ||
-      u.email?.toLowerCase().includes(q) ||
-      u.desiredExam?.toLowerCase().includes(q)
-    );
-  });
+  // Search is now server-side; users array already contains only the current page
+  const filteredUsers = users;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // AI CONFIG HANDLERS
@@ -736,7 +826,8 @@ export default function AdminDashboard() {
     setParsedQuestions([]);
     setImportFile(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
-    fetchExams();
+    fetchExams(true);
+    statsLoadedRef.current = false;
   };
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1530,6 +1621,11 @@ export default function AdminDashboard() {
                 <div>
                   <h4 className="text-sm font-bold text-white">
                     Bank Question List
+                    {bankTotalCount > 0 && (
+                      <span className="ml-2 px-2 py-0.5 text-xs font-bold rounded-full bg-indigo-500/20 text-indigo-300">
+                        {bankTotalCount} total
+                      </span>
+                    )}
                   </h4>
                   <p className="text-xs text-gray-400">
                     Search by subject, exam, difficulty, or keyword
@@ -1580,7 +1676,7 @@ export default function AdminDashboard() {
                 </select>
                 <button
                   type="button"
-                  onClick={fetchQuestionBank}
+                  onClick={() => fetchQuestionBank(1, true)}
                   className={primaryBtn}
                 >
                   Search
@@ -1620,7 +1716,7 @@ export default function AdminDashboard() {
                             </span>
                           </div>
                           <p className="text-sm font-semibold text-white">
-                            {idx + 1}. {q.text}
+                            {(bankPage - 1) * BANK_PAGE_SIZE + idx + 1}. {q.text}
                           </p>
                           <p className="text-xs text-gray-400">
                             Tags: {q.tags?.join(", ") || "None"}
@@ -1669,6 +1765,31 @@ export default function AdminDashboard() {
                   ))}
                 </div>
               )}
+
+              {/* ── Question Bank Pagination ── */}
+              {!questionBankLoading && bankTotalPages > 1 && (
+                <div className="flex items-center justify-between gap-3 pt-2">
+                  <p className="text-xs text-gray-400">
+                    Page {bankPage} of {bankTotalPages} &bull; {bankTotalCount} questions
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      disabled={bankPage <= 1}
+                      onClick={() => fetchQuestionBank(bankPage - 1, true)}
+                      className="px-3 py-1.5 text-xs font-bold bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      ← Prev
+                    </button>
+                    <button
+                      disabled={bankPage >= bankTotalPages}
+                      onClick={() => fetchQuestionBank(bankPage + 1, true)}
+                      className="px-3 py-1.5 text-xs font-bold bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+              )}
             </GlassCard>
           </div>
         </div>
@@ -1683,7 +1804,7 @@ export default function AdminDashboard() {
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
             User Management
             <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-indigo-500/20 text-indigo-300">
-              {users.length}
+              {usersTotalCount} total
             </span>
           </h3>
           <p className="text-xs text-gray-400 mt-1">
@@ -1693,7 +1814,7 @@ export default function AdminDashboard() {
         <div className="w-full sm:w-auto">
           <input
             type="text"
-            placeholder="🔍 Search users by name, email, or exam..."
+            placeholder="🔍 Search users by name or email..."
             value={userSearch}
             onChange={(e) => setUserSearch(e.target.value)}
             className={`${inputClass} sm:w-80`}
@@ -1811,6 +1932,31 @@ export default function AdminDashboard() {
             </table>
           </div>
         </GlassCard>
+      )}
+
+      {/* ── Users Pagination ── */}
+      {!usersLoading && usersTotalPages > 1 && (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs text-gray-400">
+            Page {usersPage} of {usersTotalPages} &bull; {usersTotalCount} users
+          </p>
+          <div className="flex gap-2">
+            <button
+              disabled={usersPage <= 1}
+              onClick={() => fetchUsers(usersPage - 1, userSearch, true)}
+              className="px-3 py-1.5 text-xs font-bold bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              ← Prev
+            </button>
+            <button
+              disabled={usersPage >= usersTotalPages}
+              onClick={() => fetchUsers(usersPage + 1, userSearch, true)}
+              className="px-3 py-1.5 text-xs font-bold bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Next →
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
