@@ -141,7 +141,7 @@ export default function Login() {
         </div>
 
         <button
-          onClick={() => window.location.href = '/api/auth/google'}
+          onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || ''}/api/auth/google`}
           className="w-full py-3 px-4 border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800/50 text-gray-700 dark:text-gray-300 font-semibold rounded-xl flex items-center justify-center gap-2 transition"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
