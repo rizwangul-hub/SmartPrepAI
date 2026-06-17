@@ -290,7 +290,7 @@ export default function Dashboard() {
             <img
               src={logoImg}
               alt="PrepForce AI Logo"
-              className="h-14 sm:h-16 w-auto object-contain"
+              className="h-9 sm:h-16 w-auto object-contain"
               onError={() => setLogoFailed(true)}
             />
           )}
