@@ -315,6 +315,17 @@ export default function LandingPage() {
             Pakistan's AI-Powered Test Preparation Platform
           </p>
         </div>
+        <div className="flex items-center justify-center gap-2 mb-4 text-xs text-slate-400">
+          <span>Our Ecosystem:</span>
+          <a
+            href="https://forcereadyai-frontend.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-400 hover:text-indigo-300 font-bold underline transition"
+          >
+            ForceReady AI (Interview Prep)
+          </a>
+        </div>
         <p className="text-xs text-slate-600">
           © {new Date().getFullYear()} PrepForce AI · Built for Pakistan's
           aspirants · All rights reserved

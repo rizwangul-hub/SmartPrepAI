@@ -702,6 +702,32 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+
+        {/* ForceReady AI Promo Banner */}
+        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-800 p-6 sm:p-8 text-white shadow-2xl transition-all duration-300 border border-emerald-500/20 hover:scale-[1.01] hover:shadow-emerald-500/10">
+          <div className="absolute inset-0 bg-black/10 backdrop-blur-[1px]"></div>
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <span className="px-3 py-1 text-[10px] font-black rounded-full bg-white/20 border border-white/20 uppercase tracking-widest">
+                💼 Interview Prep Partner
+              </span>
+              <h3 className="text-2xl font-black">
+                Ready for your Job Interview? Try ForceReady AI!
+              </h3>
+              <p className="text-white/80 text-sm leading-relaxed">
+                Practice real-time interactive AI interviews, get instant performance scoring, and master conceptual questions designed to help you land your dream job.
+              </p>
+            </div>
+            <a
+              href="https://forcereadyai-frontend.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3.5 bg-white text-emerald-950 font-extrabold text-xs rounded-xl shadow-lg hover:bg-emerald-50 active:scale-95 transition-all whitespace-nowrap"
+            >
+              🎤 Start Mock Interview →
+            </a>
+          </div>
+        </div>
       </main>
 
       {/* Selected Exam Modal */}
