@@ -15,13 +15,17 @@ export function AuthProvider({ children }) {
       const urlToken = params.get('token');
       const urlUser = params.get('user');
 
+      let currentUser = null;
+
       if (urlToken) {
         localStorage.setItem('token', urlToken);
         axios.defaults.headers.common['Authorization'] = `Bearer ${urlToken}`;
 
         if (urlUser) {
           try {
-            localStorage.setItem('user', decodeURIComponent(urlUser));
+            const decoded = JSON.parse(decodeURIComponent(urlUser));
+            localStorage.setItem('user', JSON.stringify(decoded));
+            currentUser = decoded;
           } catch (decodeError) {
             console.warn('Failed to decode user data from URL:', decodeError);
           }
@@ -32,19 +36,23 @@ export function AuthProvider({ children }) {
         window.history.replaceState({}, document.title, cleanUrl.toString());
       }
 
-      const token = localStorage.getItem('token');
-      if (token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        try {
-          const res = await axios.get('/api/auth/me');
-          setUser(res.data);
-          localStorage.setItem('user', JSON.stringify(res.data));
-        } catch (err) {
-          console.error('Failed to verify token on mount', err);
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        const token = localStorage.getItem('token');
+        if (token) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          try {
+            const res = await axios.get('/api/auth/me');
+            setUser(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+          } catch (err) {
+            console.error('Failed to verify token on mount', err);
+            logout();
+          }
+        } else {
           logout();
         }
-      } else {
-        logout();
       }
       setLoading(false);
     };
