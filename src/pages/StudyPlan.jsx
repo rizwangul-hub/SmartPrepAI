@@ -34,26 +34,89 @@ export default function StudyPlan() {
   const { user, logout } = useAuth();
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [weeks, setWeeks] = useState(8);
   const [dailyHours, setDailyHours] = useState(3);
 
+  useEffect(() => {
+    const fetchSavedPlan = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get('/api/study');
+        if (res.data && res.data.structuredPlan) {
+          setPlan({
+            exam: res.data.exam,
+            weeksRemaining: res.data.weeksRemaining || 8,
+            dailyHours: res.data.dailyHours || 3,
+            plan: res.data.structuredPlan,
+            tips: res.data.tips || MOCK_PLAN.tips
+          });
+          setWeeks(res.data.weeksRemaining || 8);
+          setDailyHours(res.data.dailyHours || 3);
+          setGenerated(true);
+        }
+      } catch (err) {
+        console.warn('No saved study plan found or load error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchSavedPlan();
+  }, []);
+
   const generatePlan = async () => {
     setLoading(true);
     try {
-      const res = await axios.post('/api/study/generate', {
+      // Fallback or local calculation based on selections (which is stored in database later)
+      const calculatedPlan = {
+        exam: user?.desiredExam || 'Your Exam',
+        weeksRemaining: weeks,
+        dailyHours,
+        plan: MOCK_PLAN.plan.map(d => ({
+          ...d,
+          hours: Math.max(1, Math.round(dailyHours * (d.day === 'Sunday' ? 0.5 : d.day === 'Friday' ? 1.0 : 0.8) * 10) / 10)
+        })),
+        tips: MOCK_PLAN.tips
+      };
+      setPlan(calculatedPlan);
+      
+      // Automatically persist to DB
+      await axios.post('/api/study/save', {
         exam: user?.desiredExam || 'General',
         weeksRemaining: weeks,
         dailyHours,
+        plan: calculatedPlan.plan,
+        tips: calculatedPlan.tips
       });
-      setPlan(res.data.plan || MOCK_PLAN);
     } catch (err) {
       console.error('Study plan error:', err);
-      // Fall back to mock plan
       setPlan({ ...MOCK_PLAN, exam: user?.desiredExam || 'Your Exam', weeksRemaining: weeks, dailyHours });
     } finally {
       setLoading(false);
       setGenerated(true);
+    }
+  };
+
+  const savePlan = async () => {
+    if (!plan) return;
+    setSaving(true);
+    try {
+      await axios.post('/api/study/save', {
+        exam: plan.exam,
+        weeksRemaining: weeks,
+        dailyHours,
+        plan: plan.plan,
+        tips: plan.tips
+      });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      console.error('Error saving study plan:', err);
+      alert('Failed to save study plan');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -227,8 +290,15 @@ export default function StudyPlan() {
                 📝 Take a Mock Test
               </button>
               <button
+                onClick={savePlan}
+                disabled={saving}
+                className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : saveSuccess ? '✓ Saved Plan!' : '💾 Save Study Plan'}
+              </button>
+              <button
                 onClick={() => navigate('/leaderboard')}
-                className="px-6 py-3 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 font-bold rounded-xl transition"
+                className="px-6 py-3 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 font-bold rounded-xl transition text-gray-700 dark:text-gray-300"
               >
                 🏆 View Leaderboard
               </button>

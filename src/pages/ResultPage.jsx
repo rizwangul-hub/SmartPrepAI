@@ -102,7 +102,15 @@ export default function ResultPage() {
             />
           )}
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="px-4 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition whitespace-nowrap"
+          >
+            ← Dashboard
+          </button>
+        </div>
       </nav>
 
       <main className="flex-1 p-6 md:p-8 max-w-4xl mx-auto w-full space-y-8 animate-in fade-in slide-in-from-bottom-6 duration-300">

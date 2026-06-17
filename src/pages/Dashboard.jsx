@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import NotificationBell from "../components/NotificationBell.jsx";
 import axios from "axios";
 import logoImg from "../assets/logo.png";
@@ -128,10 +129,37 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [logoFailed, setLogoFailed] = useState(false);
 
-  const [exams, setExams] = useState([]);
-  const [results, setResults] = useState([]);
-  const [stagesInfo, setStagesInfo] = useState(null);
-  const [loadingExams, setLoadingExams] = useState(true);
+  const queryClient = useQueryClient();
+
+  const { data: exams = [], isLoading: loadingExams } = useQuery({
+    queryKey: ['exams'],
+    queryFn: async () => {
+      const res = await axios.get("/api/exams");
+      return res.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: results = [] } = useQuery({
+    queryKey: ['my-results'],
+    queryFn: async () => {
+      const res = await axios.get("/api/results/my-results");
+      return res.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: stagesInfo = null } = useQuery({
+    queryKey: ['stages', user?.desiredExam],
+    queryFn: async () => {
+      const res = await axios.get(
+        `/api/tests/stages?examName=${encodeURIComponent(user?.desiredExam || "")}`
+      );
+      return res.data;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
   const [selectedExam, setSelectedExam] = useState(null);
   const [seeding, setSeeding] = useState(false);
   const [seedMessage, setSeedMessage] = useState("");
@@ -181,44 +209,16 @@ export default function Dashboard() {
 
   const theme = getTheme();
 
-  const fetchDashboardData = async () => {
-    try {
-      const examsRes = await axios.get("/api/exams");
-      setExams(examsRes.data);
-    } catch (err) {
-      console.error("Error fetching exams:", err);
-    } finally {
-      setLoadingExams(false);
-    }
-
-    try {
-      const resultsRes = await axios.get("/api/results/my-results");
-      setResults(resultsRes.data);
-    } catch (err) {
-      console.error("Error fetching results:", err);
-    }
-
-    try {
-      const stagesRes = await axios.get(
-        `/api/tests/stages?examName=${encodeURIComponent(user?.desiredExam || "")}`,
-      );
-      setStagesInfo(stagesRes.data);
-    } catch (err) {
-      console.error("Error fetching stages:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchDashboardData();
-  }, [user]);
-
   const handleSeed = async () => {
     setSeeding(true);
     setSeedMessage("");
     try {
       const res = await axios.post("/api/exams/seed");
       setSeedMessage(res.data.message || "Seeded successfully!");
-      fetchDashboardData();
+      // Invalidate and refetch cached items
+      queryClient.invalidateQueries({ queryKey: ['exams'] });
+      queryClient.invalidateQueries({ queryKey: ['my-results'] });
+      queryClient.invalidateQueries({ queryKey: ['stages'] });
     } catch (err) {
       setSeedMessage(err.response?.data?.message || "Seeding failed");
     } finally {
@@ -666,7 +666,7 @@ export default function Dashboard() {
                       onClick={() => navigate(`/result/${res._id}`)}
                     >
                       <td className="px-6 py-4 font-medium text-gray-200">
-                        {res.exam?.title || "Unknown Exam"}
+                        {res.examName || res.exam?.title || "Practice Mock Test"}
                       </td>
                       <td className="px-6 py-4 text-gray-400">
                         {new Date(res.takenAt).toLocaleDateString()}

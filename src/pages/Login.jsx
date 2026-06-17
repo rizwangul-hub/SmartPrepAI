@@ -61,6 +61,15 @@ export default function Login() {
       <div className="absolute top-[-10%] left-[-10%] w-72 h-72 rounded-full bg-pink-400 blur-3xl opacity-40 animate-pulse"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-blue-400 blur-3xl opacity-40 animate-pulse delay-700"></div>
 
+      <div className="absolute top-4 left-4 z-10">
+        <button
+          onClick={() => navigate('/')}
+          className="px-4 py-2 text-xs font-bold bg-white/20 hover:bg-white/30 dark:bg-slate-800/40 dark:hover:bg-slate-800/60 text-white dark:text-gray-200 border border-white/10 rounded-xl transition"
+        >
+          ← Home
+        </button>
+      </div>
+
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
