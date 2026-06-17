@@ -782,12 +782,29 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* AI Tutor Chat Assistant Floating Drawer Widget */}
-      <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50">
+      {/* WhatsApp & AI Tutor Chat Assistant Floating Drawer Widget */}
+      <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 flex flex-col gap-3 items-end">
+        {!chatOpen && (
+          <a
+            href="https://wa.me/923179500901?text=can%20i%20ask%20about%20PrepForce%20AI"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center text-2xl shadow-2xl hover:scale-110 active:scale-95 transition-all"
+            title="Chat on WhatsApp"
+          >
+            <svg
+              className="w-7 h-7 fill-current"
+              viewBox="0 0 24 24"
+            >
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.59 1.967 14.12 .94 11.5 1.01c-5.433 0-9.858 4.37-9.862 9.8.001 1.761.469 3.483 1.359 5.017l-.95 3.473 3.559-.946zm12.167-7.238c-.3-.15-1.782-.88-2.062-.982-.28-.1-.484-.15-.688.15-.204.3-.787.98-.963 1.18-.178.2-.355.22-.655.07-1.127-.565-1.92-1.03-2.678-2.33-.2-.34.2-.32.572-1.065.06-.12.03-.23-.015-.33-.045-.1-2.062-4.96-2.147-5.16-.082-.2-.164-.2-.224-.2H7.3c-.22 0-.58.08-.88.41-.3.33-1.15 1.12-1.15 2.73 0 1.6 1.17 3.16 1.33 3.38.17.22 2.3 3.52 5.58 4.94.78.34 1.39.54 1.86.69.78.25 1.49.21 2.05.13.62-.09 1.782-.73 2.032-1.43.25-.7.25-1.3.17-1.43-.08-.13-.28-.21-.58-.36z" />
+            </svg>
+          </a>
+        )}
+
         {!chatOpen ? (
           <button
             onClick={() => setChatOpen(true)}
-            className="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-full flex items-center justify-center text-2xl shadow-2xl ml-auto hover:scale-110 active:scale-95 transition-all animate-bounce"
+            className="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-full flex items-center justify-center text-2xl shadow-2xl hover:scale-110 active:scale-95 transition-all animate-bounce cursor-pointer"
             title="Ask AI Exam Assistant"
           >
             💬
