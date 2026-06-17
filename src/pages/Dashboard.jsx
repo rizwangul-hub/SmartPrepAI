@@ -786,7 +786,7 @@ export default function Dashboard() {
       <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 flex flex-col gap-3 items-end">
         {!chatOpen && (
           <a
-            href="https://wa.me/923179500901?text=can%20i%20ask%20about%20PrepForce%20AI"
+            href="https://wa.me/923179500901?text=Assalam-o-Alaikum!%20I%20am%20preparing%20for%20my%20test%20on%20PrepForce%20AI%20and%20would%20like%20to%20ask%20a%20few%20questions.%20Can%20you%20please%20assist%20me%3F"
             target="_blank"
             rel="noopener noreferrer"
             className="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full flex items-center justify-center text-2xl shadow-2xl hover:scale-110 active:scale-95 transition-all"
