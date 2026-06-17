@@ -24,6 +24,8 @@ import Leaderboard from "./pages/Leaderboard.jsx";
 import StudyPlan from "./pages/StudyPlan.jsx";
 import Profile from "./pages/Profile.jsx";
 import Certificate from "./pages/Certificate.jsx";
+import SEOPage from "./pages/SEOPage.jsx";
+import SEOBlogPage from "./pages/SEOBlogPage.jsx";
 
 function App() {
   return (
@@ -129,6 +131,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* Programmatic SEO routes */}
+            <Route path="/blog/:slug" element={<SEOBlogPage />} />
+            <Route path="/:seoSlug" element={<SEOPage />} />
 
             {/* Fallbacks */}
             <Route path="*" element={<NotFound />} />
