@@ -790,7 +790,7 @@ export default function Dashboard() {
             href="https://wa.me/923179500901?text=Assalam-o-Alaikum!%20I%20am%20preparing%20for%20my%20test%20on%20PrepForce%20AI%20and%20would%20like%20to%20ask%20a%20few%20questions.%20Can%20you%20please%20assist%20me%3F"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-14 h-14 bg-emerald-500 hover:bg-emerald-600 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all overflow-hidden border border-white/10"
+            className="w-16 h-16 flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
             title="Chat on WhatsApp"
           >
             <img
