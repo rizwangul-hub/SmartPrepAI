@@ -97,7 +97,7 @@ export default function ResultPage() {
             <img
               src={logoImg}
               alt="PrepForce AI Logo"
-              className="h-8 w-auto object-contain"
+              className="h-10 sm:h-12 w-auto object-contain"
               onError={() => setLogoFailed(true)}
             />
           )}
