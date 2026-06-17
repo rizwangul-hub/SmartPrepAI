@@ -10,44 +10,50 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [logoFailed, setLogoFailed] = useState(false);
-  const { login, loading, isAuthenticated } = useAuth();
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
 
-  // Read URL query parameters synchronously to bypass mounting race conditions
-  const params = new URLSearchParams(window.location.search);
-  const urlToken = params.get('token');
-  const urlErr = params.get('error');
-
   useEffect(() => {
-    if (urlErr) {
-      setError(urlErr);
-    }
-  }, [urlErr]);
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const userStr = params.get('user');
+    const err = params.get('error');
 
-  useEffect(() => {
-    if (isAuthenticated || urlToken) {
-      navigate('/dashboard', { replace: true });
+    if (err) {
+      setError(err);
+      return;
     }
-  }, [isAuthenticated, urlToken, navigate]);
+
+    if (token) {
+      localStorage.setItem('token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      if (userStr) {
+        try {
+          localStorage.setItem('user', decodeURIComponent(userStr));
+        } catch (decodeError) {
+          console.warn('Failed to decode Google login user data:', decodeError);
+        }
+      }
+
+      // Remove query params from URL after handling redirect
+      const url = new URL(window.location.href);
+      url.search = '';
+      window.history.replaceState({}, document.title, url.toString());
+      window.location.href = '/dashboard';
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
       await login(email, password);
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     }
   };
-
-  // Prevent flicker: Render a loading spinner immediately if already authenticated or in the middle of Google Redirect
-  if ((urlToken || isAuthenticated) && !error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-900 dark:via-purple-950 dark:to-slate-900 relative overflow-hidden">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-900 dark:via-purple-950 dark:to-slate-900 p-4 relative overflow-hidden">
