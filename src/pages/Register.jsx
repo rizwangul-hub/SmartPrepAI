@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
-import logoImg from '../assets/logo.png';
 
 const exams = [
   'PMA',
@@ -33,7 +32,6 @@ export default function Register() {
   const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [logoFailed, setLogoFailed] = useState(false);
   const { register, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -82,38 +80,17 @@ export default function Register() {
       <div className="absolute top-[-10%] right-[-10%] w-72 h-72 rounded-full bg-indigo-400 blur-3xl opacity-40 animate-pulse"></div>
       <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 rounded-full bg-purple-400 blur-3xl opacity-40 animate-pulse delay-700"></div>
 
-      <div className="absolute top-4 left-4 z-10">
-        <button
-          onClick={() => navigate('/')}
-          className="px-4 py-2 text-xs font-bold bg-white/20 hover:bg-white/30 dark:bg-slate-800/40 dark:hover:bg-slate-800/60 text-white dark:text-gray-200 border border-white/10 rounded-xl transition"
-        >
-          ← Home
-        </button>
-      </div>
-
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
 
       <div className="w-full max-w-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl p-8 transition-all">
         <div className="text-center mb-8">
-          {logoFailed ? (
-            <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent mb-2">
-              PrepForce AI
-            </h1>
-          ) : (
-            <img
-              src={logoImg}
-              alt="PrepForce AI Logo"
-              className="h-14 mx-auto mb-4 object-contain"
-              onError={() => setLogoFailed(true)}
-            />
-          )}
-          <h1 className="text-2xl font-extrabold text-gray-800 dark:text-gray-200">
+          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
             Create Your Account
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-            Join PrepForce AI and start taking high-yield simulated exams
+            Join SmartPrepAI and start taking high-yield simulated exams
           </p>
         </div>
 
@@ -141,7 +118,7 @@ export default function Register() {
                 value={form.fullName}
                 onChange={handleChange}
                 required
-                placeholder="Muhammad Ali"
+                placeholder="Rizwan Ullah"
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
               />
             </div>
@@ -256,6 +233,8 @@ export default function Register() {
           onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || ''}/api/auth/google`}
           className="w-full py-3 px-4 border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800/50 text-gray-700 dark:text-gray-300 font-semibold rounded-xl flex items-center justify-center gap-2 transition"
         >
+        console.log(import.meta.env.VITE_API_URL);
+        
           <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="#4285F4"
