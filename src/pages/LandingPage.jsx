@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import axios from "axios";
+import logoImg from "../assets/logo.png";
 
 const EXAMS = [
   { icon: "🎖️", name: "PMA Long Course", category: "Military" },
@@ -60,6 +61,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [questionCount, setQuestionCount] = useState(null);
+  const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
     axios.get("/api/public-stats")
@@ -84,11 +86,19 @@ export default function LandingPage() {
     <div className="min-h-screen bg-slate-950 text-white font-sans">
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/60 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 sm:gap-3">
-          <span className="text-xl sm:text-2xl">⚡</span>
-          <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap">
-            SmartPrep<span className="hidden xs:inline"> AI</span>
-          </span>
+        <div onClick={() => navigate("/")} className="flex items-center gap-2 cursor-pointer">
+          {logoFailed ? (
+            <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent whitespace-nowrap">
+              PrepForce AI
+            </span>
+          ) : (
+            <img
+              src={logoImg}
+              alt="PrepForce AI Logo"
+              className="h-8 w-auto object-contain"
+              onError={() => setLogoFailed(true)}
+            />
+          )}
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <ThemeToggle />
@@ -282,7 +292,7 @@ export default function LandingPage() {
             </span>
           </h2>
           <p className="text-slate-400">
-            Join thousands of students who are preparing smarter with SmartPrep
+            Join thousands of students who are preparing smarter with PrepForce
             AI.
           </p>
           <button
@@ -296,12 +306,17 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800 py-8 px-6 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <span>⚡</span>
-          <span className="font-bold text-slate-300">SmartPrep AI</span>
+        <div className="flex flex-col items-center justify-center gap-1 mb-3">
+          <div className="flex items-center gap-2">
+            <span>⚡</span>
+            <span className="font-bold text-slate-300">PrepForce AI</span>
+          </div>
+          <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+            Pakistan's AI-Powered Test Preparation Platform
+          </p>
         </div>
         <p className="text-xs text-slate-600">
-          © {new Date().getFullYear()} SmartPrep AI · Built for Pakistan's
+          © {new Date().getFullYear()} PrepForce AI · Built for Pakistan's
           aspirants · All rights reserved
         </p>
       </footer>

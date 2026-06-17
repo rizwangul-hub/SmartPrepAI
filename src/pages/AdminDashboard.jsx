@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ThemeToggle from "../components/ThemeToggle.jsx";
+import logoImg from "../assets/logo.png";
 
 // ─── Tab Configuration ────────────────────────────────────────────────────────
 const TABS = [
@@ -92,6 +93,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   // ── Global State ──
+  const [logoFailed, setLogoFailed] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
   const [toast, setToast] = useState(null);
   const showToast = (message, type = "info") => setToast({ message, type });
@@ -2337,10 +2339,23 @@ export default function AdminDashboard() {
       {/* ── Top Navbar ── */}
       <nav className="sticky top-0 z-40 bg-slate-900/70 backdrop-blur-xl border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2 sm:gap-3">
-          <span className="text-xl sm:text-2xl">⚡</span>
-          <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-purple-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
-            SmartPrep<span className="hidden xs:inline">AI</span> <span className="hidden sm:inline">Admin</span>
-          </span>
+          {logoFailed ? (
+            <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-purple-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
+              PrepForce AI <span className="hidden sm:inline">Admin</span>
+            </span>
+          ) : (
+            <div className="flex items-center gap-2">
+              <img
+                src={logoImg}
+                alt="PrepForce AI Logo"
+                className="h-8 w-auto object-contain"
+                onError={() => setLogoFailed(true)}
+              />
+              <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-purple-400 via-indigo-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap hidden sm:inline">
+                Admin
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <ThemeToggle />
@@ -2392,7 +2407,7 @@ export default function AdminDashboard() {
       {/* ── Footer ── */}
       <footer className="border-t border-white/5 py-6 px-6 text-center">
         <p className="text-xs text-gray-600">
-          SmartPrepAI Admin Suite — Built with ⚡ by the platform team
+          PrepForce AI Admin Suite — Built with ⚡ by the platform team
         </p>
       </footer>
     </div>

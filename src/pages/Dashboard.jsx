@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import NotificationBell from "../components/NotificationBell.jsx";
 import axios from "axios";
+import logoImg from "../assets/logo.png";
 import {
   AreaChart,
   Area,
@@ -110,7 +111,7 @@ const EXAM_THEMES = {
     primaryColor: "purple-500",
     accentColor: "pink-400",
     badgeIcon: "⚡",
-    badgeTitle: "SmartPrep Competitive Center",
+    badgeTitle: "PrepForce Competitive Center",
     bannerText:
       "Master your competitive examinations with modular, AI-simulated testing environments.",
     colorClasses: {
@@ -125,6 +126,7 @@ const EXAM_THEMES = {
 export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [logoFailed, setLogoFailed] = useState(false);
 
   const [exams, setExams] = useState([]);
   const [results, setResults] = useState([]);
@@ -279,11 +281,19 @@ export default function Dashboard() {
     >
       {/* Premium Navbar */}
       <nav className="sticky top-0 z-40 bg-white/10 dark:bg-slate-900/10 backdrop-blur-xl border-b border-white/10 px-4 py-3 sm:px-6 sm:py-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-1.5 sm:gap-3">
-          <span className="text-xl sm:text-2xl">{theme.badgeIcon}</span>
-          <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
-            SmartPrep<span className="hidden xs:inline">AI</span>
-          </span>
+        <div onClick={() => navigate("/")} className="flex items-center gap-2 cursor-pointer">
+          {logoFailed ? (
+            <span className="text-sm sm:text-xl font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent whitespace-nowrap">
+              PrepForce AI
+            </span>
+          ) : (
+            <img
+              src={logoImg}
+              alt="PrepForce AI Logo"
+              className="h-8 w-auto object-contain"
+              onError={() => setLogoFailed(true)}
+            />
+          )}
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="hidden sm:flex flex-col text-right">

@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import axios from 'axios';
+import logoImg from '../assets/logo.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [logoFailed, setLogoFailed] = useState(false);
   const { login, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -65,12 +67,23 @@ export default function Login() {
 
       <div className="w-full max-w-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl p-8 transition-all duration-300">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-bold text-2xl mb-4 shadow-lg">
-            ⚡
-          </div>
-          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
-            SmartPrepAI
-          </h1>
+          {logoFailed ? (
+            <>
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-bold text-2xl mb-4 shadow-lg">
+                ⚡
+              </div>
+              <h1 className="text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 bg-clip-text text-transparent">
+                PrepForce AI
+              </h1>
+            </>
+          ) : (
+            <img
+              src={logoImg}
+              alt="PrepForce AI Logo"
+              className="h-16 mx-auto mb-4 object-contain"
+              onError={() => setLogoFailed(true)}
+            />
+          )}
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             Accelerate your exam preparation with AI-powered mock tests
           </p>

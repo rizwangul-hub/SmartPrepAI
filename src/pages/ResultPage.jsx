@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import ThemeToggle from '../components/ThemeToggle.jsx';
+import logoImg from '../assets/logo.png';
 
 export default function ResultPage() {
   const { resultId } = useParams();
@@ -12,6 +13,7 @@ export default function ResultPage() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -86,11 +88,19 @@ export default function ResultPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 flex flex-col font-sans">
       <nav className="sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-800/50 px-6 py-4 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">⚡</span>
-          <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-            SmartPrepAI
-          </span>
+        <div onClick={() => navigate("/")} className="flex items-center gap-2 cursor-pointer">
+          {logoFailed ? (
+            <span className="text-xl font-extrabold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
+              PrepForce AI
+            </span>
+          ) : (
+            <img
+              src={logoImg}
+              alt="PrepForce AI Logo"
+              className="h-8 w-auto object-contain"
+              onError={() => setLogoFailed(true)}
+            />
+          )}
         </div>
         <ThemeToggle />
       </nav>

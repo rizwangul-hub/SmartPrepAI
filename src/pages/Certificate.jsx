@@ -82,7 +82,7 @@ export default function Certificate() {
     // Platform name
     ctx.font = 'bold 22px Arial';
     ctx.fillStyle = '#818cf8';
-    ctx.fillText('SmartPrep AI', W / 2, 145);
+    ctx.fillText('PrepForce AI', W / 2, 145);
 
     // Subtitle
     ctx.font = '13px Arial';
@@ -137,7 +137,7 @@ export default function Certificate() {
     // Exam title
     ctx.font = 'bold 20px Arial';
     ctx.fillStyle = '#e2e8f0';
-    ctx.fillText(result?.exam?.title || 'SmartPrep Mock Examination', W / 2, 395);
+    ctx.fillText(result?.exam?.title || 'PrepForce Mock Examination', W / 2, 395);
 
     // Score badge background
     const badgeX = W / 2 - 80;
@@ -175,7 +175,7 @@ export default function Certificate() {
     // Footer
     ctx.font = '11px Arial';
     ctx.fillStyle = '#475569';
-    ctx.fillText('SmartPrep AI · Pakistan Government & Competitive Exam Preparation', W / 2, 545);
+    ctx.fillText('PrepForce AI · Pakistan Government & Competitive Exam Preparation', W / 2, 545);
     ctx.fillText('This is an auto-generated certificate for practice purposes.', W / 2, 560);
   };
 
@@ -183,7 +183,7 @@ export default function Certificate() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const link = document.createElement('a');
-    link.download = `SmartPrepAI_Certificate_${user?.name || 'Student'}.png`;
+    link.download = `PrepForceAI_Certificate_${user?.name || 'Student'}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
   };
