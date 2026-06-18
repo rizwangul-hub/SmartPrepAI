@@ -61,16 +61,16 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-900 dark:via-purple-950 dark:to-slate-900 p-4 relative overflow-hidden">
-      {/* Background blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-72 h-72 rounded-full bg-pink-400 blur-3xl opacity-40 animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-blue-400 blur-3xl opacity-40 animate-pulse delay-700" />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 p-4 relative overflow-hidden transition-colors duration-500">
+      {/* Soft background glow blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-72 h-72 rounded-full bg-indigo-300/25 dark:bg-indigo-500/10 blur-3xl animate-pulse" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-purple-300/25 dark:bg-purple-500/10 blur-3xl animate-pulse delay-700" />
 
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl p-8 transition-all duration-300">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200/80 dark:border-slate-800 rounded-3xl shadow-xl p-8 transition-all duration-300">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-bold text-2xl mb-4 shadow-lg">
@@ -124,7 +124,7 @@ export default function ResetPassword() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
                   />
                   <button
                     type="button"
@@ -170,7 +170,7 @@ export default function ResetPassword() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
                   />
                   <button
                     type="button"

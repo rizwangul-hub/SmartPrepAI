@@ -75,16 +75,16 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 via-indigo-500 to-blue-500 dark:from-slate-900 dark:via-indigo-950 dark:to-slate-900 p-4 relative overflow-hidden">
-      {/* Background design elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-72 h-72 rounded-full bg-indigo-400 blur-3xl opacity-40 animate-pulse"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 rounded-full bg-purple-400 blur-3xl opacity-40 animate-pulse delay-700"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 p-4 relative overflow-hidden transition-colors duration-500">
+      {/* Soft background glow blobs */}
+      <div className="absolute top-[-10%] right-[-10%] w-72 h-72 rounded-full bg-indigo-300/25 dark:bg-indigo-500/10 blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 rounded-full bg-purple-300/25 dark:bg-purple-500/10 blur-3xl animate-pulse delay-700"></div>
 
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-2xl bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl p-8 transition-all">
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200/80 dark:border-slate-800 rounded-3xl shadow-xl p-8 transition-all">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-indigo-600 dark:from-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
             Create Your Account
@@ -119,7 +119,7 @@ export default function Register() {
                 onChange={handleChange}
                 required
                 placeholder="Rizwan Ullah"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
               />
             </div>
 
@@ -133,8 +133,8 @@ export default function Register() {
                 value={form.email}
                 onChange={handleChange}
                 required
-                placeholder="ali@example.com"
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                placeholder="rizwan@example.com"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
               />
             </div>
 
@@ -150,7 +150,7 @@ export default function Register() {
                   onChange={handleChange}
                   required
                   placeholder="••••••••"
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
                 />
                 <button
                   type="button"
@@ -179,7 +179,7 @@ export default function Register() {
                 name="desiredExam"
                 value={form.desiredExam}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
               >
                 {exams.map((ex) => (
                   <option key={ex} value={ex}>
@@ -199,7 +199,7 @@ export default function Register() {
                   name="profileImage"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 focus:outline-none transition"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 focus:outline-none transition"
                 />
                 {imagePreview && (
                   <img src={imagePreview} alt="Preview" className="w-12 h-12 rounded-xl object-cover border border-purple-200 dark:border-purple-900 shadow" />
@@ -233,7 +233,6 @@ export default function Register() {
           onClick={() => window.location.href = `${import.meta.env.VITE_API_URL || ''}/api/auth/google`}
           className="w-full py-3 px-4 border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-slate-800/50 text-gray-700 dark:text-gray-300 font-semibold rounded-xl flex items-center justify-center gap-2 transition"
         >
-        console.log(import.meta.env.VITE_API_URL);
         
           <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
             <path

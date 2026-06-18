@@ -56,15 +56,15 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 dark:from-slate-900 dark:via-purple-950 dark:to-slate-900 p-4 relative overflow-hidden">
-      {/* Abstract background blobs for wow design */}
-      <div className="absolute top-[-10%] left-[-10%] w-72 h-72 rounded-full bg-pink-400 blur-3xl opacity-40 animate-pulse"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-blue-400 blur-3xl opacity-40 animate-pulse delay-700"></div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-slate-950 text-gray-900 dark:text-gray-100 p-4 relative overflow-hidden transition-colors duration-500">
+      {/* Soft background glow blobs */}
+      <div className="absolute top-[-10%] left-[-10%] w-72 h-72 rounded-full bg-indigo-300/25 dark:bg-indigo-500/10 blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 rounded-full bg-purple-300/25 dark:bg-purple-500/10 blur-3xl animate-pulse delay-700"></div>
 
       <div className="absolute top-4 left-4 z-10">
         <button
           onClick={() => navigate('/')}
-          className="px-4 py-2 text-xs font-bold bg-white/20 hover:bg-white/30 dark:bg-slate-800/40 dark:hover:bg-slate-800/60 text-white dark:text-gray-200 border border-white/10 rounded-xl transition"
+          className="px-4 py-2 text-xs font-bold bg-white dark:bg-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-slate-800/80 rounded-xl shadow-sm transition"
         >
           ← Home
         </button>
@@ -74,7 +74,7 @@ export default function Login() {
         <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-md bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-800 rounded-3xl shadow-2xl p-8 transition-all duration-300">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900/90 backdrop-blur-xl border border-gray-200/80 dark:border-slate-800 rounded-3xl shadow-xl p-8 transition-all duration-300">
         <div className="text-center mb-8">
           {logoFailed ? (
             <>
@@ -115,7 +115,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800 bg-white/50 dark:bg-slate-950/50 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-slate-800/80 bg-gray-50 dark:bg-slate-950/80 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:bg-white dark:focus:bg-slate-950 transition"
             />
           </div>
 
