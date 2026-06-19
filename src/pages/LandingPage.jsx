@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import axios from "axios";
 import logoImg from "../assets/logo.png";
+import Footer from "../components/Footer.jsx";
 
 const EXAMS = [
   { icon: "🎖️", name: "PMA Long Course", category: "Military" },
@@ -305,32 +306,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 py-8 px-6 text-center">
-        <div className="flex flex-col items-center justify-center gap-1 mb-3">
-          <div className="flex items-center gap-2">
-            <span>⚡</span>
-            <span className="font-bold text-slate-300">PrepForce AI</span>
-          </div>
-          <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">
-            Pakistan's AI-Powered Test Preparation Platform
-          </p>
-        </div>
-        <div className="flex items-center justify-center gap-2 mb-4 text-xs text-slate-400">
-          <span>Our Ecosystem:</span>
-          <a
-            href="https://forcereadyai-frontend.vercel.app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-indigo-400 hover:text-indigo-300 font-bold underline transition"
-          >
-            ForceReady AI (Interview Prep)
-          </a>
-        </div>
-        <p className="text-xs text-slate-600">
-          © {new Date().getFullYear()} PrepForce AI · Built for Pakistan's
-          aspirants · All rights reserved
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

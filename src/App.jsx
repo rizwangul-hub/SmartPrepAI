@@ -27,6 +27,17 @@ import Certificate from "./pages/Certificate.jsx";
 import SEOPage from "./pages/SEOPage.jsx";
 import SEOBlogPage from "./pages/SEOBlogPage.jsx";
 
+// Import new legal, company, and support pages
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import TermsAndConditions from "./pages/TermsAndConditions.jsx";
+import Disclaimer from "./pages/Disclaimer.jsx";
+import AboutUs from "./pages/AboutUs.jsx";
+import OurMission from "./pages/OurMission.jsx";
+import WhyChooseUs from "./pages/WhyChooseUs.jsx";
+import ContactUs from "./pages/ContactUs.jsx";
+import HelpCenter from "./pages/HelpCenter.jsx";
+import FAQ from "./pages/FAQ.jsx";
+
 function App() {
   return (
     <ErrorBoundary>
@@ -39,6 +50,17 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
+
+            {/* Public Info & Legal Routes */}
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/our-mission" element={<OurMission />} />
+            <Route path="/why-choose-us" element={<WhyChooseUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
+            <Route path="/help-center" element={<HelpCenter />} />
+            <Route path="/faq" element={<FAQ />} />
 
             {/* Protected User Routes */}
             <Route

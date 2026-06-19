@@ -14,6 +14,7 @@ const TABS = [
   { id: "ai-config", label: "AI Config", icon: "🤖" },
   { id: "notifications", label: "Notifications", icon: "🔔" },
   { id: "bulk-import", label: "Bulk Import", icon: "📦" },
+  { id: "contact-messages", label: "Support Messages", icon: "✉️" },
 ];
 
 // ─── Reusable Glass Card ──────────────────────────────────────────────────────
@@ -170,6 +171,7 @@ export default function AdminDashboard() {
   const [aiSettings, setAiSettings] = useState({
     aiProvider: "openrouter",
     openrouterKey: "",
+    defaultModel: "deepseek/deepseek-chat",
   });
   const [aiLoading, setAiLoading] = useState(true);
   const [aiSaving, setAiSaving] = useState(false);
@@ -191,6 +193,19 @@ export default function AdminDashboard() {
   const [importing, setImporting] = useState(false);
   const [parsedQuestions, setParsedQuestions] = useState([]);
   const fileInputRef = useRef(null);
+
+  // ── Contact Messages State ──
+  const [contactMessages, setContactMessages] = useState([]);
+  const [contactMessagesLoading, setContactMessagesLoading] = useState(true);
+  const [contactMessagesSearch, setContactMessagesSearch] = useState("");
+  const [contactMessagesPage, setContactMessagesPage] = useState(1);
+  const [contactMessagesTotalPages, setContactMessagesTotalPages] = useState(1);
+  const [contactMessagesTotalCount, setContactMessagesTotalCount] = useState(0);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const contactMessagesLoadedRef = useRef(false);
+  const lastContactMessagesPageRef = useRef(null);
+  const lastContactMessagesSearchRef = useRef(null);
+  const CONTACT_MESSAGES_PAGE_SIZE = 10;
 
   // Caching Refs
   const statsLoadedRef = useRef(false);
@@ -278,12 +293,46 @@ export default function AdminDashboard() {
       setAiSettings({
         aiProvider: res.data.aiProvider || "openrouter",
         openrouterKey: res.data.openrouterKey || res.data.openaiKey || "",
+        defaultModel: res.data.defaultModel || "deepseek/deepseek-chat",
       });
       aiSettingsLoadedRef.current = true;
     } catch (err) {
       console.error("AI settings fetch error:", err);
     } finally {
       setAiLoading(false);
+    }
+  };
+
+  const fetchContactMessages = async (page = contactMessagesPage, search = contactMessagesSearch, force = false) => {
+    if (
+      contactMessagesLoadedRef.current &&
+      lastContactMessagesPageRef.current === page &&
+      lastContactMessagesSearchRef.current === search &&
+      !force
+    ) {
+      return;
+    }
+    setContactMessagesLoading(true);
+    try {
+      const params = new URLSearchParams({
+        page: String(page),
+        limit: String(CONTACT_MESSAGES_PAGE_SIZE),
+      });
+      if (search.trim()) params.set("search", search.trim());
+      const res = await axios.get(`/api/admin/contact-messages?${params.toString()}`);
+      setContactMessages(res.data.messages ?? []);
+      setContactMessagesTotalPages(res.data.totalPages ?? 1);
+      setContactMessagesTotalCount(res.data.totalCount ?? 0);
+      setContactMessagesPage(page);
+
+      contactMessagesLoadedRef.current = true;
+      lastContactMessagesPageRef.current = page;
+      lastContactMessagesSearchRef.current = search;
+    } catch (err) {
+      console.error("Contact messages fetch error:", err);
+      showToast(err.response?.data?.message || "Failed to load messages", "error");
+    } finally {
+      setContactMessagesLoading(false);
     }
   };
 
@@ -300,6 +349,7 @@ export default function AdminDashboard() {
     if (activeTab === "users" || activeTab === "notifications") fetchUsers(1, userSearch);
     if (activeTab === "ai-config") fetchAiSettings();
     if (activeTab === "question-bank") fetchQuestionBank(1);
+    if (activeTab === "contact-messages") fetchContactMessages(1);
   }, [activeTab]);
 
   // Debounced server-side user search — fires 400ms after typing stops
@@ -310,6 +360,15 @@ export default function AdminDashboard() {
     }, 400);
     return () => clearTimeout(timer);
   }, [userSearch]);
+
+  // Debounced server-side support messages search — fires 400ms after typing stops
+  useEffect(() => {
+    if (activeTab !== "contact-messages") return;
+    const timer = setTimeout(() => {
+      fetchContactMessages(1, contactMessagesSearch, true);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [contactMessagesSearch]);
 
   // ═══════════════════════════════════════════════════════════════════════════
   // EXAM HANDLERS
@@ -2002,6 +2061,26 @@ export default function AdminDashboard() {
             </div>
           </GlassCard>
 
+          <GlassCard className="p-6 space-y-4">
+            <h4 className="text-sm font-bold text-white">🤖 Default AI Model</h4>
+            <div>
+              <label className={labelClass}>Default Model Slug</label>
+              <input
+                type="text"
+                value={aiSettings.defaultModel}
+                onChange={(e) =>
+                  setAiSettings({ ...aiSettings, defaultModel: e.target.value })
+                }
+                placeholder="e.g. deepseek/deepseek-chat, google/gemini-2.5-flash"
+                className={inputClass}
+              />
+              <p className="text-[10px] text-gray-400 mt-2 leading-relaxed">
+                Enter any valid OpenRouter model slug (e.g. <code>deepseek/deepseek-chat</code>, <code>google/gemini-2.5-flash</code>, or <code>meta-llama/llama-3.3-70b-instruct:free</code>).
+                <br /><strong className="text-amber-300">Note:</strong> If you use a <code>:free</code> model on OpenRouter, it is shared and may quickly hit the OpenRouter daily free rate limit (50 requests/day). Setting it to cheap paid models like <code>deepseek/deepseek-chat</code> ($0.14/million tokens) or <code>google/gemini-2.5-flash</code> ($0.075/million tokens) provides high reliability if your OpenRouter key has credits.
+              </p>
+            </div>
+          </GlassCard>
+
           <button
             type="submit"
             disabled={aiSaving}
@@ -2281,6 +2360,172 @@ export default function AdminDashboard() {
     </div>
   );
 
+  // ─── Tab 7: Support Messages ────────────────────────────────────────────────
+  const renderContactMessages = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-wrap justify-between items-center gap-3">
+          <div>
+            <h3 className="text-xl font-bold text-white">
+              ✉️ Support & Contact Messages
+            </h3>
+            <p className="text-xs text-gray-400 mt-1">
+              View questions, feedback, and support tickets submitted by users.
+            </p>
+          </div>
+          {contactMessagesTotalCount > 0 && (
+            <span className="px-3 py-1 text-xs font-bold rounded-full bg-indigo-500/20 text-indigo-300">
+              {contactMessagesTotalCount} total messages
+            </span>
+          )}
+        </div>
+
+        {/* Search & Listing */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Inbox list */}
+          <div className="lg:col-span-2 space-y-4">
+            <GlassCard className="p-6 space-y-4">
+              <div className="flex gap-3">
+                <input
+                  type="text"
+                  value={contactMessagesSearch}
+                  onChange={(e) => setContactMessagesSearch(e.target.value)}
+                  placeholder="Search by name, email, subject, content..."
+                  className={inputClass}
+                />
+                <button
+                  onClick={() => fetchContactMessages(1, contactMessagesSearch, true)}
+                  className={primaryBtn}
+                >
+                  Refresh
+                </button>
+              </div>
+
+              {contactMessagesLoading ? (
+                <Spinner />
+              ) : !contactMessages.length ? (
+                <div className="text-center py-12 text-gray-400 text-sm">
+                  No support messages found.
+                </div>
+              ) : (
+                <div className="divide-y divide-white/5 space-y-2">
+                  {contactMessages.map((msg) => (
+                    <div
+                      key={msg._id}
+                      onClick={() => setSelectedMessage(msg)}
+                      className={`p-4 rounded-xl cursor-pointer transition ${
+                        selectedMessage?._id === msg._id
+                          ? "bg-indigo-500/10 border border-indigo-500/30"
+                          : "hover:bg-white/5 border border-transparent"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-bold text-white">
+                            {msg.subject}
+                          </h4>
+                          <p className="text-xs text-gray-400">
+                            From: <strong className="text-gray-200">{msg.name}</strong> ({msg.email})
+                          </p>
+                        </div>
+                        <span className="text-[10px] text-gray-500 whitespace-nowrap">
+                          {new Date(msg.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2 line-clamp-2">
+                        {msg.message}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {!contactMessagesLoading && contactMessagesTotalPages > 1 && (
+                <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/5">
+                  <p className="text-xs text-gray-400">
+                    Page {contactMessagesPage} of {contactMessagesTotalPages}
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      disabled={contactMessagesPage <= 1}
+                      onClick={() => fetchContactMessages(contactMessagesPage - 1, contactMessagesSearch, true)}
+                      className="px-3 py-1.5 text-xs font-bold bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      ← Prev
+                    </button>
+                    <button
+                      disabled={contactMessagesPage >= contactMessagesTotalPages}
+                      onClick={() => fetchContactMessages(contactMessagesPage + 1, contactMessagesSearch, true)}
+                      className="px-3 py-1.5 text-xs font-bold bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                </div>
+              )}
+            </GlassCard>
+          </div>
+
+          {/* Details Panel */}
+          <div className="lg:col-span-1">
+            <GlassCard className="p-6 space-y-4 sticky top-44">
+              <h4 className="text-sm font-bold text-white border-b border-white/5 pb-2">
+                ✉️ Message Detail
+              </h4>
+              {selectedMessage ? (
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-gray-400 uppercase font-semibold">Subject</span>
+                    <h3 className="text-base font-bold text-indigo-300">
+                      {selectedMessage.subject}
+                    </h3>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-gray-400 uppercase font-semibold">Sender</span>
+                    <p className="text-sm font-bold text-white">{selectedMessage.name}</p>
+                    <a
+                      href={`mailto:${selectedMessage.email}`}
+                      className="text-xs text-indigo-400 hover:underline block"
+                    >
+                      {selectedMessage.email}
+                    </a>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-gray-400 uppercase font-semibold">Submitted At</span>
+                    <p className="text-xs text-gray-300">
+                      {new Date(selectedMessage.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1 pt-2 border-t border-white/5">
+                    <span className="text-[10px] text-gray-400 uppercase font-semibold block mb-1">Message Content</span>
+                    <p className="text-sm text-gray-300 bg-white/5 p-4 rounded-xl border border-white/5 whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto">
+                      {selectedMessage.message}
+                    </p>
+                  </div>
+
+                  <a
+                    href={`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject}`}
+                    className={`w-full py-2.5 inline-flex items-center justify-center ${primaryBtn}`}
+                  >
+                    Reply via Email 📤
+                  </a>
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-500 text-xs">
+                  Select a message from the list to view its full details and compose a response.
+                </div>
+              )}
+            </GlassCard>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // ═══════════════════════════════════════════════════════════════════════════
   // MAIN RENDER
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2301,6 +2546,8 @@ export default function AdminDashboard() {
         return renderNotifications();
       case "bulk-import":
         return renderBulkImport();
+      case "contact-messages":
+        return renderContactMessages();
       default:
         return renderOverview();
     }
