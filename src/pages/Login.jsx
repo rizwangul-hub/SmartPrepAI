@@ -89,7 +89,7 @@ export default function Login() {
             <img
               src={logoImg}
               alt="PrepForce AI Logo"
-              className="h-16 mx-auto mb-4 object-contain"
+              className="h-16 mx-auto mb-4 object-contain rounded-xl"
               onError={() => setLogoFailed(true)}
             />
           )}

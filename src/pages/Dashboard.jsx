@@ -291,7 +291,7 @@ export default function Dashboard() {
             <img
               src={logoImg}
               alt="PrepForce AI Logo"
-              className="h-9 sm:h-16 w-auto object-contain"
+              className="h-9 sm:h-16 w-auto object-contain rounded-xl"
               onError={() => setLogoFailed(true)}
             />
           )}
@@ -375,6 +375,12 @@ export default function Dashboard() {
                 className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
               >
                 📅 View Study Planner
+              </button>
+              <button
+                onClick={() => navigate("/leaderboard")}
+                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
+              >
+                🏆 View Leaderboard
               </button>
             </div>
           </div>
@@ -660,7 +666,11 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {results.map((res) => (
+                  {results
+                    .slice()
+                    .sort((a, b) => new Date(b.takenAt) - new Date(a.takenAt))
+                    .slice(0, 5)
+                    .map((res) => (
                     <tr
                       key={res._id}
                       className="hover:bg-white/10 cursor-pointer transition-colors"
