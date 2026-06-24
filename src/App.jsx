@@ -26,6 +26,7 @@ import Profile from "./pages/Profile.jsx";
 import Certificate from "./pages/Certificate.jsx";
 import SEOPage from "./pages/SEOPage.jsx";
 import SEOBlogPage from "./pages/SEOBlogPage.jsx";
+import CommunityChat from "./pages/CommunityChat.jsx";
 
 // Import new legal, company, and support pages
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
@@ -132,6 +133,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <GenerateTest />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <ProtectedRoute>
+                  <CommunityChat />
                 </ProtectedRoute>
               }
             />

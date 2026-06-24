@@ -170,7 +170,7 @@ export default function ContactUs() {
                   <div>
                     <h4 className="text-xs font-semibold text-gray-400">Ecosystem Partner</h4>
                     <a 
-                      href="https://forcereadyai-frontend.vercel.app" 
+                      href="https://www.forcereadyai.online" 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline"

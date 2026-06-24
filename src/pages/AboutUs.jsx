@@ -137,7 +137,7 @@ export default function AboutUs() {
             We partner with <strong>ForceReady AI</strong> to offer specialized, AI-driven physical and interview assessment advice for PMA, ISSB, and recruiting boards.
           </p>
           <a
-            href="https://forcereadyai-frontend.vercel.app"
+            href="https://www.forcereadyai.online"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-2xl shadow transition"

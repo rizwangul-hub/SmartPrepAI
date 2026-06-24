@@ -327,6 +327,13 @@ export default function Dashboard() {
           )}
           <ThemeToggle />
           <button
+            onClick={() => navigate("/chat")}
+            className="p-1.5 sm:p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition text-sm sm:text-base"
+            title="Community Chat"
+          >
+            💬
+          </button>
+          <button
             onClick={() => navigate("/profile")}
             className="p-1.5 sm:p-2 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition text-sm sm:text-base"
             title="Settings"
@@ -390,6 +397,12 @@ export default function Dashboard() {
                 className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
               >
                 🏆 View Leaderboard
+              </button>
+              <button
+                onClick={() => navigate("/chat")}
+                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
+              >
+                💬 Community Chat
               </button>
             </div>
           </div>
