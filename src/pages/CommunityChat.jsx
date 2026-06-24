@@ -30,6 +30,7 @@ export default function CommunityChat() {
 
   // States
   const [socket, setSocket] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [pinnedMessages, setPinnedMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -89,9 +90,12 @@ export default function CommunityChat() {
 
     // Establish Socket.io connection
     const token = localStorage.getItem('token');
-    const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin;
+    const socketUrl = import.meta.env.VITE_API_URL || 
+      (window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin);
+    
     const newSocket = io(socketUrl, {
-      auth: { token }
+      auth: { token },
+      transports: ['websocket', 'polling']
     });
 
     setSocket(newSocket);
@@ -99,6 +103,17 @@ export default function CommunityChat() {
     // Socket Event Listeners
     newSocket.on('connect', () => {
       console.log('Socket connected successfully');
+      setIsConnected(true);
+    });
+
+    newSocket.on('disconnect', (reason) => {
+      console.warn('Socket disconnected:', reason);
+      setIsConnected(false);
+    });
+
+    newSocket.on('connect_error', (err) => {
+      console.error('Socket connection error:', err);
+      setIsConnected(false);
     });
 
     newSocket.on('onlineCount', (count) => {
@@ -223,6 +238,11 @@ export default function CommunityChat() {
   const handleSend = (e) => {
     e.preventDefault();
     if (!input.trim() || !socket) return;
+    if (!isConnected) {
+      setErrorMsg('Cannot send message: Disconnected from chat server.');
+      setTimeout(() => setErrorMsg(''), 5000);
+      return;
+    }
 
     socket.emit(
       'sendMessage',
@@ -379,10 +399,17 @@ export default function CommunityChat() {
           <div className="h-6 w-px bg-slate-800 hidden sm:block"></div>
           <div className="hidden sm:block">
             <h1 className="text-sm font-black tracking-wide uppercase">Community Chat</h1>
-            <p className="text-[10px] text-indigo-400 flex items-center gap-1.5 font-bold">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              {onlineCount} active students online
-            </p>
+            {isConnected ? (
+              <p className="text-[10px] text-indigo-400 flex items-center gap-1.5 font-bold">
+                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                {onlineCount} active students online
+              </p>
+            ) : (
+              <p className="text-[10px] text-amber-500 flex items-center gap-1.5 font-bold">
+                <span className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                Connecting to real-time chat...
+              </p>
+            )}
           </div>
         </div>
 
@@ -665,16 +692,18 @@ export default function CommunityChat() {
                 placeholder={
                   user?.isChatBanned
                     ? 'You are blocked from sending messages.'
+                    : !isConnected
+                    ? 'Connecting to chat server...'
                     : 'Type a message in the community...'
                 }
                 value={input}
                 onChange={handleInputChange}
-                disabled={user?.isChatBanned}
+                disabled={user?.isChatBanned || !isConnected}
                 className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition disabled:opacity-50"
               />
               <button
                 type="submit"
-                disabled={!input.trim() || user?.isChatBanned}
+                disabled={!input.trim() || user?.isChatBanned || !isConnected}
                 className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center"
               >
                 <Send size={16} />
