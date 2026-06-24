@@ -181,6 +181,34 @@ export default function CommunityChat() {
     };
   }, [user?._id, soundEnabled]);
 
+  // Fallback HTTP Polling: Poll for new messages every 5 seconds when socket is disconnected
+  useEffect(() => {
+    if (isConnected) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await axios.get('/api/chat/messages');
+        setMessages((prev) => {
+          const existingIds = new Set(prev.map((m) => m._id));
+          const newMsgs = res.data.filter((m) => !existingIds.has(m._id));
+          if (newMsgs.length === 0) return prev;
+          
+          const merged = [...prev, ...newMsgs].sort(
+            (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+          );
+          
+          // Try to scroll to bottom if new messages arrived
+          setTimeout(scrollToBottomIfNear, 100);
+          return merged;
+        });
+      } catch (err) {
+        console.warn('Failed to poll new messages:', err);
+      }
+    }, 5000);
+
+    return () => clearInterval(pollInterval);
+  }, [isConnected]);
+
   // Scroll helpers
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -234,37 +262,59 @@ export default function CommunityChat() {
     }
   };
 
-  // Send message
-  const handleSend = (e) => {
+  // Send message (falls back to HTTP POST if socket is disconnected)
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || !socket) return;
-    if (!isConnected) {
-      setErrorMsg('Cannot send message: Disconnected from chat server.');
-      setTimeout(() => setErrorMsg(''), 5000);
-      return;
-    }
+    if (!input.trim()) return;
 
-    socket.emit(
-      'sendMessage',
-      {
-        message: input,
-        replyTo: replyTo ? replyTo._id : null
-      },
-      (res) => {
-        if (!res.success) {
-          setErrorMsg(res.error || 'Failed to send message');
-          // Clear error banner after 6 seconds
-          setTimeout(() => setErrorMsg(''), 6000);
-        } else {
-          setInput('');
-          setReplyTo(null);
-          scrollToBottom();
-        }
-      }
-    );
+    const messageText = input;
+    const replyId = replyTo ? replyTo._id : null;
 
     // Stop typing immediately
     handleTypingStop();
+
+    if (isConnected && socket) {
+      // Send via WebSocket
+      socket.emit(
+        'sendMessage',
+        {
+          message: messageText,
+          replyTo: replyId
+        },
+        (res) => {
+          if (!res.success) {
+            setErrorMsg(res.error || 'Failed to send message');
+            setTimeout(() => setErrorMsg(''), 6000);
+          } else {
+            setInput('');
+            setReplyTo(null);
+            scrollToBottom();
+          }
+        }
+      );
+    } else {
+      // Send via HTTP POST Fallback
+      try {
+        const res = await axios.post('/api/chat/messages', {
+          message: messageText,
+          replyTo: replyId
+        });
+        
+        // Add to local state immediately
+        setMessages((prev) => {
+          if (prev.some((p) => p._id === res.data._id)) return prev;
+          return [...prev, res.data];
+        });
+        
+        setInput('');
+        setReplyTo(null);
+        setTimeout(scrollToBottom, 50);
+      } catch (err) {
+        console.error('HTTP send fallback failed:', err);
+        setErrorMsg(err.response?.data?.message || 'Failed to send message.');
+        setTimeout(() => setErrorMsg(''), 6000);
+      }
+    }
   };
 
   // Typing event emission (Debounced)
@@ -406,8 +456,8 @@ export default function CommunityChat() {
               </p>
             ) : (
               <p className="text-[10px] text-amber-500 flex items-center gap-1.5 font-bold">
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                Connecting to real-time chat...
+                <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></span>
+                Real-time disabled (polling active)
               </p>
             )}
           </div>
@@ -692,18 +742,16 @@ export default function CommunityChat() {
                 placeholder={
                   user?.isChatBanned
                     ? 'You are blocked from sending messages.'
-                    : !isConnected
-                    ? 'Connecting to chat server...'
                     : 'Type a message in the community...'
                 }
                 value={input}
                 onChange={handleInputChange}
-                disabled={user?.isChatBanned || !isConnected}
+                disabled={user?.isChatBanned}
                 className="flex-1 bg-slate-950 border border-slate-800 rounded-2xl px-5 py-3.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition disabled:opacity-50"
               />
               <button
                 type="submit"
-                disabled={!input.trim() || user?.isChatBanned || !isConnected}
+                disabled={!input.trim() || user?.isChatBanned}
                 className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center"
               >
                 <Send size={16} />
