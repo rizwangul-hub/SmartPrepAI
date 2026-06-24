@@ -93,91 +93,108 @@ export default function CommunityChat() {
     const socketUrl = import.meta.env.VITE_API_URL || 
       (window.location.hostname === 'localhost' ? 'http://localhost:5000' : window.location.origin);
     
-    const newSocket = io(socketUrl, {
-      auth: { token },
-      transports: ['websocket', 'polling']
-    });
+    // Vercel serverless functions do not support WebSockets. Bypass socket connection to avoid console errors.
+    const isServerless = socketUrl.includes('vercel.app');
+    let newSocket = null;
 
-    setSocket(newSocket);
-
-    // Socket Event Listeners
-    newSocket.on('connect', () => {
-      console.log('Socket connected successfully');
-      setIsConnected(true);
-    });
-
-    newSocket.on('disconnect', (reason) => {
-      console.warn('Socket disconnected:', reason);
+    if (isServerless) {
+      console.log('Serverless host detected (vercel.app). Bypassing persistent WebSocket connection, fallback HTTP polling active.');
+      setSocket(null);
       setIsConnected(false);
-    });
-
-    newSocket.on('connect_error', (err) => {
-      console.error('Socket connection error:', err);
-      setIsConnected(false);
-    });
-
-    newSocket.on('onlineCount', (count) => {
-      setOnlineCount(count);
-    });
-
-    newSocket.on('messageReceived', (msg) => {
-      setMessages((prev) => {
-        // Prevent duplicate keys
-        if (prev.some((p) => p._id === msg._id)) return prev;
-        return [...prev, msg];
+    } else {
+      console.log('Connecting to socket server at:', socketUrl);
+      newSocket = io(socketUrl, {
+        auth: { token },
+        transports: ['websocket', 'polling'],
+        reconnectionAttempts: 3, // Only attempt 3 times to prevent infinite console error loops
+        timeout: 10000
       });
 
-      // Play sound and trigger browser notification if tab is unfocused
-      if (msg.sender?._id !== user?._id) {
-        if (soundEnabled && audioNotificationRef.current) {
-          audioNotificationRef.current.play().catch((e) => console.log('Audio play error:', e));
-        }
+      setSocket(newSocket);
 
-        if (document.hidden && Notification.permission === 'granted') {
-          new Notification(`New Message from ${msg.sender?.name}`, {
-            body: msg.message.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
-            icon: '/favicon.png'
-          });
-        }
-      }
-
-      // Scroll to bottom automatically if user is close to bottom
-      scrollToBottomIfNear();
-    });
-
-    newSocket.on('userTyping', ({ userId: typingId, name, isTyping: typingState }) => {
-      setTypingUsers((prev) => {
-        const next = { ...prev };
-        if (typingState) {
-          next[typingId] = name;
-        } else {
-          delete next[typingId];
-        }
-        return next;
+      // Socket Event Listeners
+      newSocket.on('connect', () => {
+        console.log('Socket connected successfully');
+        setIsConnected(true);
       });
-    });
 
-    newSocket.on('adminActionTriggered', ({ action, payload }) => {
-      if (action === 'deleteMessage') {
-        setMessages((prev) => prev.filter((m) => m._id !== payload.messageId));
-        setPinnedMessages((prev) => prev.filter((m) => m._id !== payload.messageId));
-      } else if (action === 'pinMessage') {
-        // Toggle pin status locally
-        setMessages((prev) =>
-          prev.map((m) => (m._id === payload.messageId ? { ...m, isPinned: payload.isPinned } : m))
-        );
-        // Refresh pinned messages
-        fetchPinned();
-      } else if (action === 'muteUser' && payload.userId === user?._id) {
-        setErrorMsg(`You have been temporarily muted from chat until ${new Date(payload.chatMutedUntil).toLocaleString()}`);
-      } else if (action === 'banUser' && payload.userId === user?._id) {
-        setErrorMsg('You have been banned from this community chat room.');
-        newSocket.disconnect();
-      }
-    });
+      newSocket.on('disconnect', (reason) => {
+        console.warn('Socket disconnected:', reason);
+        setIsConnected(false);
+      });
+
+      newSocket.on('connect_error', (err) => {
+        console.error('Socket connection error:', err);
+        setIsConnected(false);
+        if (newSocket.io.reconnectionAttempts >= 3) {
+          console.warn('Disabling socket reconnection due to persistent errors on this serverless host.');
+          newSocket.disconnect();
+        }
+      });
+
+      newSocket.on('onlineCount', (count) => {
+        setOnlineCount(count);
+      });
+
+      newSocket.on('messageReceived', (msg) => {
+        setMessages((prev) => {
+          // Prevent duplicate keys
+          if (prev.some((p) => p._id === msg._id)) return prev;
+          return [...prev, msg];
+        });
+
+        // Play sound and trigger browser notification if tab is unfocused
+        if (msg.sender?._id !== user?._id) {
+          if (soundEnabled && audioNotificationRef.current) {
+            audioNotificationRef.current.play().catch((e) => console.log('Audio play error:', e));
+          }
+
+          if (document.hidden && Notification.permission === 'granted') {
+            new Notification(`New Message from ${msg.sender?.name}`, {
+              body: msg.message.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+              icon: '/favicon.png'
+            });
+          }
+        }
+
+        // Scroll to bottom automatically if user is close to bottom
+        scrollToBottomIfNear();
+      });
+
+      newSocket.on('userTyping', ({ userId: typingId, name, isTyping: typingState }) => {
+        setTypingUsers((prev) => {
+          const next = { ...prev };
+          if (typingState) {
+            next[typingId] = name;
+          } else {
+            delete next[typingId];
+          }
+          return next;
+        });
+      });
+
+      newSocket.on('adminActionTriggered', ({ action, payload }) => {
+        if (action === 'deleteMessage') {
+          setMessages((prev) => prev.filter((m) => m._id !== payload.messageId));
+          setPinnedMessages((prev) => prev.filter((m) => m._id !== payload.messageId));
+        } else if (action === 'pinMessage') {
+          // Toggle pin status locally
+          setMessages((prev) =>
+            prev.map((m) => (m._id === payload.messageId ? { ...m, isPinned: payload.isPinned } : m))
+          );
+          // Refresh pinned messages
+          fetchPinned();
+        } else if (action === 'muteUser' && payload.userId === user?._id) {
+          setErrorMsg(`You have been temporarily muted from chat until ${new Date(payload.chatMutedUntil).toLocaleString()}`);
+        } else if (action === 'banUser' && payload.userId === user?._id) {
+          setErrorMsg('You have been banned from this community chat room.');
+          newSocket.disconnect();
+        }
+      });
+    }
 
     return () => {
-      newSocket.disconnect();
+      if (newSocket) newSocket.disconnect();
     };
   }, [user?._id, soundEnabled]);
 
