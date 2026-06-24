@@ -37,12 +37,10 @@ export default function SEOPage() {
           setData(res.data);
           
           // Inject dynamic meta tags & canonical link
-          const canonical = `${window.location.origin}/${seoSlug}`;
           updateMetaTags({
             title: res.data.title,
             description: res.data.metaDescription,
             keywords: res.data.keywords,
-            canonicalUrl: canonical,
           });
 
           // Inject structured schema

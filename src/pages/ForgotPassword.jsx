@@ -1,9 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ThemeToggle from '../components/ThemeToggle.jsx';
+import { updateMetaTags } from '../utils/seo';
 
 export default function ForgotPassword() {
+  useEffect(() => {
+    updateMetaTags({
+      title: "Forgot Password | PrepForce AI",
+      description: "Recover or reset your PrepForce AI account password securely.",
+      robots: "noindex, nofollow"
+    });
+  }, []);
+
   const [step, setStep] = useState('email'); // email | otp | change | done
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');

@@ -1,8 +1,9 @@
 // src/pages/Register.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
+import { updateMetaTags } from '../utils/seo';
 
 const exams = [
   'PMA',
@@ -21,6 +22,14 @@ const exams = [
 
 
 export default function Register() {
+  useEffect(() => {
+    updateMetaTags({
+      title: "Register | PrepForce AI",
+      description: "Create your free PrepForce AI account to start preparing for PMA, ASF, FIA, Navy, PAF, Police, MDCAT, ECAT, and other competitive examinations.",
+      robots: "noindex, nofollow"
+    });
+  }, []);
+
   const [form, setForm] = useState({
     fullName: '',
     email: '',

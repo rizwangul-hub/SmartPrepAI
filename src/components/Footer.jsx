@@ -69,7 +69,7 @@ export default function Footer() {
         <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">
           <span>Our Ecosystem:</span>
           <a
-            href="https://forcereadyai-frontend.vercel.app"
+            href="https://www.forcereadyai.online"
             target="_blank"
             rel="noopener noreferrer"
             className="text-indigo-500 dark:text-indigo-400 hover:underline font-bold transition"

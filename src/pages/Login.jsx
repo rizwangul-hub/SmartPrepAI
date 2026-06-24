@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import axios from 'axios';
 import logoImg from '../assets/logo.png';
+import { updateMetaTags } from '../utils/seo';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,6 +15,12 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    updateMetaTags({
+      title: "Sign In | PrepForce AI",
+      description: "Sign in to your PrepForce AI account to continue preparing for your exams with AI-powered mock tests, intelligence questions, and study plans.",
+      robots: "noindex, nofollow"
+    });
+
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
     const userStr = params.get('user');

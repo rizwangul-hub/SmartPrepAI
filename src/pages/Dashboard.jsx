@@ -6,6 +6,7 @@ import ThemeToggle from "../components/ThemeToggle.jsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import NotificationBell from "../components/NotificationBell.jsx";
 import axios from "axios";
+import { updateMetaTags } from "../utils/seo";
 import logoImg from "../assets/logo.png";
 import whatsappLogoImg from "../assets/whatsappLogo.webp";
 import {
@@ -129,6 +130,14 @@ export default function Dashboard() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [logoFailed, setLogoFailed] = useState(false);
+
+  useEffect(() => {
+    updateMetaTags({
+      title: "Dashboard | PrepForce AI",
+      description: "Manage your online test preparation, view analytics, and practice tests.",
+      robots: "noindex, nofollow"
+    });
+  }, []);
 
   const queryClient = useQueryClient();
 
@@ -730,7 +739,7 @@ export default function Dashboard() {
               </p>
             </div>
             <a
-              href="https://forcereadyai-frontend.vercel.app"
+              href="https://www.forcereadyai.online"
               target="_blank"
               rel="noopener noreferrer"
               className="px-6 py-3.5 bg-white text-emerald-950 font-extrabold text-xs rounded-xl shadow-lg hover:bg-emerald-50 active:scale-95 transition-all whitespace-nowrap"

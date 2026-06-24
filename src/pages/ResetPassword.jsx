@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import ThemeToggle from '../components/ThemeToggle.jsx';
+import { updateMetaTags } from '../utils/seo';
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -18,6 +19,14 @@ export default function ResetPassword() {
   useEffect(() => {
     if (!token) navigate('/forgot-password');
   }, [token, navigate]);
+
+  useEffect(() => {
+    updateMetaTags({
+      title: "Reset Password | PrepForce AI",
+      description: "Set a new password for your PrepForce AI account.",
+      robots: "noindex, nofollow"
+    });
+  }, []);
 
   const getStrength = (pwd) => {
     let score = 0;

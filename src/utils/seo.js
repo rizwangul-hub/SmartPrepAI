@@ -3,7 +3,7 @@
 /**
  * Dynamically updates head metadata for programmatic SEO.
  */
-export function updateMetaTags({ title, description, keywords, canonicalUrl }) {
+export function updateMetaTags({ title, description, keywords, canonicalUrl, robots }) {
   if (title) {
     document.title = title;
   }
@@ -31,15 +31,53 @@ export function updateMetaTags({ title, description, keywords, canonicalUrl }) {
   }
 
   // Update Canonical URL
-  if (canonicalUrl) {
-    let canonicalLink = document.querySelector('link[rel="canonical"]');
-    if (!canonicalLink) {
-      canonicalLink = document.createElement('link');
-      canonicalLink.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonicalLink);
-    }
-    canonicalLink.setAttribute('href', canonicalUrl);
+  let canonicalLink = document.querySelector('link[rel="canonical"]');
+  if (!canonicalLink) {
+    canonicalLink = document.createElement('link');
+    canonicalLink.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonicalLink);
   }
+  const resolvedCanonical = canonicalUrl || `${window.location.origin}${window.location.pathname}`;
+  const officialCanonical = resolvedCanonical.replace(
+    /https?:\/\/(localhost:\d+|www\.|[a-zA-Z0-9-]+\.vercel\.app)/i,
+    'https://prepforceai.online'
+  );
+  canonicalLink.setAttribute('href', officialCanonical);
+
+  // Update Robots Tag
+  let robotsMeta = document.querySelector('meta[name="robots"]');
+  if (!robotsMeta) {
+    robotsMeta = document.createElement('meta');
+    robotsMeta.setAttribute('name', 'robots');
+    document.head.appendChild(robotsMeta);
+  }
+  robotsMeta.setAttribute('content', robots || 'index, follow');
+
+  // Helper to set properties/names for social metadata
+  const setMetaTag = (attrName, attrValue, contentValue) => {
+    let element = document.querySelector(`meta[${attrName}="${attrValue}"]`);
+    if (!element) {
+      element = document.createElement('meta');
+      element.setAttribute(attrName, attrValue);
+      document.head.appendChild(element);
+    }
+    element.setAttribute('content', contentValue);
+  };
+
+  // Set Open Graph Tags
+  setMetaTag('property', 'og:title', title || document.title);
+  setMetaTag('property', 'og:description', description || '');
+  setMetaTag('property', 'og:url', officialCanonical);
+  setMetaTag('property', 'og:type', 'website');
+  
+  const logoUrl = 'https://prepforceai.online/logo.png';
+  setMetaTag('property', 'og:image', logoUrl);
+
+  // Set Twitter Card Tags
+  setMetaTag('name', 'twitter:card', 'summary_large_image');
+  setMetaTag('name', 'twitter:title', title || document.title);
+  setMetaTag('name', 'twitter:description', description || '');
+  setMetaTag('name', 'twitter:image', logoUrl);
 }
 
 /**

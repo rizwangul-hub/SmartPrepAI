@@ -6,6 +6,7 @@ import ThemeToggle from "../components/ThemeToggle.jsx";
 import axios from "axios";
 import logoImg from "../assets/logo.png";
 import Footer from "../components/Footer.jsx";
+import { updateMetaTags, injectJsonLdSchema } from "../utils/seo";
 
 const EXAMS = [
   { icon: "🎖️", name: "PMA Long Course", category: "Military" },
@@ -65,6 +66,7 @@ export default function LandingPage() {
   const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
+    // 1. Fetch public stats
     axios.get("/api/public-stats")
       .then((res) => {
         if (res.data && typeof res.data.questionCount === "number") {
@@ -74,6 +76,76 @@ export default function LandingPage() {
       .catch((err) => {
         console.error("Failed to fetch public stats:", err);
       });
+
+    // 2. Set Homepage Meta Tags
+    updateMetaTags({
+      title: "PrepForce AI | Online Test Preparation for ASF, FIA, Army, PMA, PAF & Government Jobs",
+      description: "PrepForce AI is Pakistan's leading online test preparation platform for ASF, FIA, PMA, Army, Navy, PAF, Police, MDCAT, ECAT, LDC, UDC and other government jobs. Practice thousands of MCQs, mock tests, past papers and AI-powered preparation tools.",
+      keywords: "PrepForce AI, ASF Test Preparation, FIA Test Preparation, PMA Test Preparation, Police Test Preparation, PAF Test Preparation, Navy Test Preparation, ANF Test Preparation, MDCAT Preparation, ECAT Preparation, Government Jobs Test Prep",
+      canonicalUrl: "https://prepforceai.online/",
+      robots: "index, follow"
+    });
+
+    // 3. Inject structured JSON-LD schemas
+    injectJsonLdSchema({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://prepforceai.online/#organization",
+          "name": "PrepForce AI",
+          "url": "https://prepforceai.online",
+          "logo": "https://prepforceai.online/logo.png"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://prepforceai.online/#website",
+          "url": "https://prepforceai.online",
+          "name": "PrepForce AI",
+          "publisher": {
+            "@id": "https://prepforceai.online/#organization"
+          }
+        },
+        {
+          "@type": "EducationalOrganization",
+          "@id": "https://prepforceai.online/#educational_organization",
+          "name": "PrepForce AI",
+          "url": "https://prepforceai.online",
+          "logo": "https://prepforceai.online/logo.png",
+          "description": "Pakistan's leading online test preparation platform for ASF, FIA, PMA, Army, Navy, PAF, Police, MDCAT, ECAT, LDC, UDC and other government jobs."
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://prepforceai.online/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is PrepForce AI?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "PrepForce AI is Pakistan's leading online test preparation platform utilizing AI-powered tools, mock tests, and a curated question bank to help students pass competitive force recruitment, civil, and academic exams."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Which exams does PrepForce AI support?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "We support major Pakistani exams including PMA Long Course, Pak Army, Navy, PAF, ASF, FIA, Police, FPSC, PPSC, NTS/GAT, MDCAT, ECAT, LDC, and UDC."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is PrepForce AI free to use?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, you can register and start preparing with free mock tests and practice questions immediately."
+              }
+            }
+          ]
+        }
+      ]
+    });
   }, []);
 
   const getQuestionStatString = () => {
@@ -140,10 +212,10 @@ export default function LandingPage() {
             🇵🇰 Pakistan's #1 Exam Prep Platform
           </span>
 
-          <h1 className="text-5xl md:text-7xl font-black leading-tight">
-            Crack Any
-            <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Government Exam
+          <h1 className="text-4xl md:text-6xl font-black leading-tight">
+            Prepare for
+            <span className="block bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mt-2">
+              ASF, FIA, Army, PMA, PAF, Navy, Police, MDCAT, ECAT & Government Jobs
             </span>
           </h1>
 

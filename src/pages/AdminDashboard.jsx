@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ThemeToggle from "../components/ThemeToggle.jsx";
 import logoImg from "../assets/logo.png";
+import { updateMetaTags } from "../utils/seo";
 
 // ─── Tab Configuration ────────────────────────────────────────────────────────
 const TABS = [
@@ -92,6 +93,14 @@ const Spinner = () => (
 // ═══════════════════════════════════════════════════════════════════════════════
 export default function AdminDashboard() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    updateMetaTags({
+      title: "Admin Suite | PrepForce AI",
+      description: "Manage system configurations, questions, and users.",
+      robots: "noindex, nofollow"
+    });
+  }, []);
 
   // ── Global State ──
   const [logoFailed, setLogoFailed] = useState(false);

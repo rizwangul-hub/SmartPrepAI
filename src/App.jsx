@@ -154,7 +154,13 @@ function App() {
               }
             />
 
+            {/* Short-form redirects for sitemap paths */}
+            <Route path="/about" element={<Navigate to="/about-us" replace />} />
+            <Route path="/contact" element={<Navigate to="/contact-us" replace />} />
+            <Route path="/terms" element={<Navigate to="/terms-and-conditions" replace />} />
+
             {/* Programmatic SEO routes */}
+            <Route path="/exams/:seoSlug" element={<SEOPage />} />
             <Route path="/blog/:slug" element={<SEOBlogPage />} />
             <Route path="/:seoSlug" element={<SEOPage />} />
 

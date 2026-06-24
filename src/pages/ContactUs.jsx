@@ -145,8 +145,8 @@ export default function ContactUs() {
                   </div>
                   <div>
                     <h4 className="text-xs font-semibold text-gray-400">Email Address</h4>
-                    <a href="mailto:support@prepforceai.online" className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
-                      support@prepforceai.online
+                    <a href="mailto:rizwangul2426@gmail.com" className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                      rizwangul2426@gmail.com
                     </a>
                   </div>
                 </div>

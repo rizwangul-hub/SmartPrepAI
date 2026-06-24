@@ -37,12 +37,10 @@ export default function SEOBlogPage() {
           setData(res.data);
 
           // Update tags in DOM
-          const canonical = `${window.location.origin}/blog/${slug}`;
           updateMetaTags({
             title: res.data.title,
             description: res.data.metaDescription,
             keywords: res.data.keywords,
-            canonicalUrl: canonical,
           });
 
           // Inject JSON-LD Schema
