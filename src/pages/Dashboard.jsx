@@ -382,25 +382,25 @@ export default function Dashboard() {
             <div className="flex flex-wrap gap-4 pt-2">
               <button
                 onClick={() => navigate("/generate-test")}
-                className="px-5 py-3 rounded-xl bg-white text-slate-900 font-extrabold text-xs shadow-lg hover:scale-105 transition-all"
+                className="px-6 py-3.5 rounded-xl bg-white text-slate-900 font-black text-sm shadow-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
               >
-                🔧 Generate Bank-Based Mock Test
+                🚀 Start Test
               </button>
               <button
                 onClick={() => navigate("/study-plan")}
-                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
+                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 hover:border-white/45 transition-all flex items-center gap-2 cursor-pointer"
               >
                 📅 View Study Planner
               </button>
               <button
                 onClick={() => navigate("/leaderboard")}
-                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
+                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 hover:border-white/45 transition-all flex items-center gap-2 cursor-pointer"
               >
                 🏆 View Leaderboard
               </button>
               <button
                 onClick={() => navigate("/chat")}
-                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 transition-all"
+                className="px-5 py-3 rounded-xl bg-black/30 border border-white/20 text-white font-extrabold text-xs hover:bg-black/55 hover:border-white/45 transition-all flex items-center gap-2 cursor-pointer"
               >
                 💬 Community Chat
               </button>
@@ -594,74 +594,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Exams List */}
-        <div className="space-y-6">
-          <div>
-            <h3 className="text-xl font-bold text-white">
-              Active Recruits Syllabus Exams
-            </h3>
-            <p className="text-sm text-gray-400">
-              Launch standard mock formats from configured exams
-            </p>
-          </div>
-
-          {loadingExams ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
-              {[1, 2, 3].map((n) => (
-                <div
-                  key={n}
-                  className="h-44 bg-white/5 border border-white/5 rounded-3xl"
-                ></div>
-              ))}
-            </div>
-          ) : exams.length === 0 ? (
-            <div className="text-center p-12 bg-white/5 border border-dashed border-white/10 rounded-3xl">
-              <span className="text-5xl block mb-4">📭</span>
-              <h4 className="text-lg font-bold text-gray-300">
-                No mock exams loaded
-              </h4>
-              <button
-                onClick={handleSeed}
-                disabled={seeding}
-                className="mt-4 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black shadow"
-              >
-                {seeding ? "Seeding..." : "Populate Sample Recruits Exams"}
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {exams.map((ex) => (
-                <div
-                  key={ex._id}
-                  className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:border-indigo-500/50 shadow hover:shadow-indigo-500/10 transition-all p-6 flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex gap-2">
-                      <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-indigo-500/10 text-indigo-300">
-                        {ex.questions?.length || 0} Questions
-                      </span>
-                      <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-500/10 text-amber-300">
-                        {ex.duration} Mins
-                      </span>
-                    </div>
-                    <h4 className="text-base font-bold text-gray-200">
-                      {ex.title}
-                    </h4>
-                    <p className="text-xs text-gray-400 line-clamp-3">
-                      {ex.description || "No description loaded."}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedExam(ex)}
-                    className="mt-6 w-full py-3 bg-white/5 hover:bg-indigo-600 hover:text-white rounded-xl font-bold text-xs transition"
-                  >
-                    Start practice
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
 
         {/* Practice History Table */}
         {results.length > 0 && (
@@ -763,57 +695,6 @@ export default function Dashboard() {
         </div>
       </main>
 
-      {/* Selected Exam Modal */}
-      {selectedExam && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-          <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-3xl p-6 shadow-2xl space-y-6 transform animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex justify-between items-start">
-              <h3 className="text-xl font-bold text-white">
-                {selectedExam.title}
-              </h3>
-              <button
-                onClick={() => setSelectedExam(null)}
-                className="p-1 rounded-lg text-gray-400 hover:bg-white/10"
-              >
-                ✕
-              </button>
-            </div>
-            <p className="text-sm text-gray-400">{selectedExam.description}</p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-black/35 p-3 rounded-xl">
-                <span className="text-xs text-gray-500 block font-medium">
-                  Time Limit
-                </span>
-                <span className="text-base font-bold text-gray-200">
-                  {selectedExam.duration} Minutes
-                </span>
-              </div>
-              <div className="bg-black/35 p-3 rounded-xl">
-                <span className="text-xs text-gray-500 block font-medium">
-                  Total Questions
-                </span>
-                <span className="text-base font-bold text-gray-200">
-                  {selectedExam.questions?.length || 0} MCQs
-                </span>
-              </div>
-            </div>
-            <button
-              onClick={() => handleLaunchTest(selectedExam.title)}
-              disabled={launchingTest}
-              className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-650 hover:to-purple-750 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
-            >
-              {launchingTest ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Generating Exam...
-                </>
-              ) : (
-                "🚀 Launch Mock Exam"
-              )}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* WhatsApp & AI Tutor Chat Assistant Floating Drawer Widget */}
       <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:bottom-6 sm:right-6 z-50 flex flex-col gap-3 items-end">
