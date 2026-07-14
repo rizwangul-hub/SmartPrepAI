@@ -66,6 +66,12 @@ export default function LandingPage() {
   const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
     // 1. Fetch public stats
     axios.get("/api/public-stats")
       .then((res) => {
